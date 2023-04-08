@@ -1,8 +1,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/pic_sharing?serverTimezone=GMT%2b8
+    url: jdbc:mysql://localhost:3306/pics_sharing?serverTimezone=GMT%2b8
     username: root
     password: 123456
 server:
   port: 8081
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
