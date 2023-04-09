@@ -1,15 +1,15 @@
 package com.example.picsharingspringboot.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @ToString
+@AllArgsConstructor
 public class User extends BaseEntity{
     private static final long serialVersionUID = -1327935301720951537L;
     private Integer id;
@@ -23,31 +23,4 @@ public class User extends BaseEntity{
     private String address;
     private boolean isUser;
     private boolean isAdmin;
-    public User(Integer id, String username, String password, char gender, String email, String phoneNumber, Date birthday, String avatar, String address, boolean isUser, boolean isAdmin) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.gender = gender;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.birthday = birthday;
-        this.avatar = avatar;
-        this.address = address;
-        this.isUser = isUser;
-        this.isAdmin = isAdmin;
-    }
-    public User(Timestamp createdAt, Timestamp updatedAt, Integer id, String username, String password, char gender, String email, String phoneNumber, Date birthday, String avatar, String address, boolean isUser, boolean isAdmin) {
-        super(createdAt, updatedAt);
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.gender = gender;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.birthday = birthday;
-        this.avatar = avatar;
-        this.address = address;
-        this.isUser = isUser;
-        this.isAdmin = isAdmin;
-    }
 }

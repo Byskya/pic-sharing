@@ -2,8 +2,8 @@
   <div>
 <!--    搜索栏-->
     <div style="margin-bottom: 20px">
-      <el-input style="width: 240px" placeholder="请输入名称"></el-input>
-      <el-button style="margin-left: 5px" type="primary"><i class="el-icon-search"></i>搜索</el-button>
+      <el-input style="width: 240px" placeholder="请输入名称" v-model="params.username"></el-input>
+      <el-button style="margin-left: 5px" type="primary" @click="search"><i class="el-icon-search"></i>搜索</el-button>
     </div>
     <el-table
         :data="tableData"
@@ -11,7 +11,13 @@
         style="width: 100%">
       <el-table-column
           fixed
-          prop="updatedAt"
+          prop="id"
+          label="id"
+          width="150">
+      </el-table-column>
+      <el-table-column
+          fixed
+          prop="createdAt"
           label="注册日期"
           width="150">
       </el-table-column>
@@ -68,7 +74,22 @@ export default {
   data() {
     return{
       tableData:[
-      ]
+      ],
+      params:{
+        username:'',
+        pageNum:'1',
+        pageSize:'10'
+      }
+    }
+  },
+  methods:{
+    search(){
+      this.axios.get('http://localhost:8081/search/user/'+this.params.username).then(reponse=>{
+        this.tableData=reponse.data.data
+      })
+      .catch(error=>{
+        console.log(error)
+      })
     }
   },
   mounted() {

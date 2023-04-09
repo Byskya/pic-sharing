@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.picsharingspringboot.mapper.UserMapper">
     <select id="getAllUser" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user
+    </select>
+    <select id="searchUser" resultType="com.example.picsharingspringboot.entity.User">
+        select * from t_user where username like concat('%',#{username},'%')
     </select>
 </mapper>
