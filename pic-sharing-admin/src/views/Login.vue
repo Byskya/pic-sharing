@@ -52,6 +52,7 @@ export default {
               console.log('登录成功')
               // 跳转到后台管理页面
               this.$message.success("登录成功")
+              //设置路由守卫的的登录判断变量
               localStorage.setItem('isLoggedIn','true')
               this.$router.push('/')
             }

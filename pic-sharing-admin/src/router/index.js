@@ -60,13 +60,13 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-// layout组件页面的守卫，未登录前禁止访问
+//全局前置守卫，未登录前禁止访问网站的一切内容
 router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
   if (to.path === '/login') {
     // 如果是访问登录页面，则不需要进行登录验证，直接放行
     next()
-  } else if (to.matched.some(record => record.meta.requiresAuth)) {
+  } else if (to.matched.some(record => record.meta.requiresAuth)) { //判断跳转的目标路由是否需要进行登录才能访问
     // 如果需要进行登录验证，则判断用户是否已登录
     if (!isLoggedIn) {
       // 如果用户未登录，则重定向到登录页面
@@ -79,5 +79,5 @@ router.beforeEach((to, from, next) => {
     // 如果不需要进行登录验证，则直接放行
     next()
   }
-})
+});
 export default router

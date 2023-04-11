@@ -27,6 +27,10 @@
             <i class="el-icon-message-solid"></i>
             <span>消息中心</span>
           </el-menu-item>
+          <el-menu-item @click="loginOut">
+            <i class="el-icon-switch-button"></i>
+            <span>退出登录</span>
+          </el-menu-item>
         </el-menu>
       </div>
       <!--      内容区-->
@@ -43,6 +47,13 @@ export default {
   data() {
     return {
       isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
+    }
+  },
+  methods:{
+    loginOut(){
+      localStorage.setItem('isLoggedIn','false')
+      this.$message.success("退出登录成功")
+      window.location.reload();
     }
   }
 }
