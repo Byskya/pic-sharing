@@ -3,10 +3,19 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.picsharingspringboot.mapper.UserMapper">
+    <update id="updateUserInfo">
+        update t_user set username=#{username},gender=#{gender},phone_number=#{phoneNumber},birthday=#{birthday},address=#{address} where id=#{id}
+    </update>
+    <update id="banUser">
+        UPDATE t_user SET is_delete = CASE is_delete WHEN 0 THEN 1 ELSE 0 END WHERE id = #{id}
+    </update>
     <select id="getAllUser" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user
     </select>
     <select id="searchUser" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user where username like concat('%',#{username},'%')
+    </select>
+    <select id="getUserInfo" resultType="com.example.picsharingspringboot.entity.User">
+        select * from t_user where username = #{username}
     </select>
 </mapper>

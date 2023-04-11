@@ -8,4 +8,10 @@ public interface UserService {
     List<User> getAllUser();
 
     List<User> searchUser(String username);
+
+    User updateUserInfo(User user);
+
+    void banUser(Integer id);
+
+    boolean adminLogin(User user);
 }

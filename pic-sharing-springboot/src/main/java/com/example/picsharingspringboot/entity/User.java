@@ -23,4 +23,5 @@ public class User extends BaseEntity{
     private String address;
     private boolean isUser;
     private boolean isAdmin;
+    private Integer isDelete;
 }
