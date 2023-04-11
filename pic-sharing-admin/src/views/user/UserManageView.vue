@@ -100,7 +100,7 @@ export default {
     //加载后端的用户数据
     load(){
       if(this.judge===0){
-        this.axios.get('http://localhost:8081/get/allUser/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+        this.axios.get('http://localhost:9090/get/allUser/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
           if(response.status === 200){
             this.tableData=response.data.data.list
             this.total = response.data.data.total
@@ -110,7 +110,7 @@ export default {
         })
       }
       else{
-        this.axios.get('http://localhost:8081/search/user/'+this.params.username+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+        this.axios.get('http://localhost:9090/search/user/'+this.params.username+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
           if (response.status === 200){
             this.tableData=response.data.data.list
             this.total = response.data.data.total
@@ -129,7 +129,7 @@ export default {
     //根据用户名模糊查询用户数据
     search(){
       this.reset()
-      this.axios.get('http://localhost:8081/search/user/'+this.params.username+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.axios.get('http://localhost:9090/search/user/'+this.params.username+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.status === 200){
           this.tableData=response.data.data.list
           this.total = response.data.data.total
@@ -157,7 +157,7 @@ export default {
     //拉黑用户
     handleClickBan(row){
       if (row.isDelete===0){
-        this.axios.put('http://localhost:8081/user/ban/'+row.id).then(response=>{
+        this.axios.put('http://localhost:9090/user/ban/'+row.id).then(response=>{
           if (response.status===200){
             row.isDelete=1
             this.$message.success("冻结完毕")
@@ -168,7 +168,7 @@ export default {
         })
       }
       else {
-        this.axios.put('http://localhost:8081/user/ban/'+row.id).then(response=>{
+        this.axios.put('http://localhost:9090/user/ban/'+row.id).then(response=>{
           if (response.status===200){
             row.isDelete=0
             this.$message.success("解冻完毕")

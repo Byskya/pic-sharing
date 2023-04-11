@@ -63,7 +63,7 @@ export default {
     onSubmit() {
       console.log('submit!');
       const jsonUserData = JSON.stringify(this.formInline)
-      this.axios.put('http://localhost:8081/user/update',jsonUserData,{
+      this.axios.put('http://localhost:9090/user/update',jsonUserData,{
         headers:{
           'Content-Type':'application/json'
         }

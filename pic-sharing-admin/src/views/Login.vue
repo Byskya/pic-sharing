@@ -43,7 +43,7 @@ export default {
         if (valid) {
           const jsonUserData = JSON.stringify(this.form)
           // 处理登录逻辑，比如向后端API发送登录请求等
-          this.axios.post('http://localhost:8081/admin/login',jsonUserData,{
+          this.axios.post('http://localhost:9090/admin/login',jsonUserData,{
             headers:{
               'Content-Type':'application/json'
             }
