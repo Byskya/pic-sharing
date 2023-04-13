@@ -69,7 +69,6 @@ public class UserController {
 //    管理员登录
     @PostMapping("/admin/login")
     public ResponseResult<User> adminLogin(@RequestBody User user){
-        System.out.println("登录请求接收====================================");
         ResponseResult<User> rr = new ResponseResult<>();
         boolean judge = userService.adminLogin(user);
         if (judge){
@@ -79,8 +78,43 @@ public class UserController {
         }
         else {
             rr.setData(null);
-            rr.setState(404);
+            rr.setState(500);
             rr.setMessage("用户密码错误或者被拉黑");
+        }
+        return rr;
+    }
+    //    普通用户登录
+    @PostMapping("/user/login")
+    public ResponseResult<User> userLogin(@RequestBody User user){
+        ResponseResult<User> rr = new ResponseResult<>();
+        boolean judge2 = userService.userLogin(user);
+        if (judge2){
+            rr.setData(user);
+            rr.setState(200);
+            rr.setMessage("用户登录成功");
+        }
+        else {
+            rr.setData(null);
+            rr.setState(500);
+            rr.setMessage("用户密码或账号输入错误或者被拉黑");
+        }
+        return rr;
+    }
+    //普通用户注册
+    @PostMapping("/user/register")
+    public ResponseResult<User> userRegister(@RequestBody User user){
+        System.out.println("用户注册============================");
+        ResponseResult<User> rr = new ResponseResult<>();
+        boolean judge = userService.userRegister(user);
+        if (judge){
+            rr.setData(user);
+            rr.setState(200);
+            rr.setMessage("用户注册成功");
+        }
+        else {
+            rr.setData(null);
+            rr.setState(500);
+            rr.setMessage("用户已存在或其他错误，请重试");
         }
         return rr;
     }

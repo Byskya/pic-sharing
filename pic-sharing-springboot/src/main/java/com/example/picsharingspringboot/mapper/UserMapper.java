@@ -15,4 +15,6 @@ public interface UserMapper {
     void banUser(Integer id);
 
     User getUserInfo(User user);
+
+    int addUser(User user);
 }

@@ -3,6 +3,7 @@ package com.example.picsharingspringboot.service.impl;
 import com.example.picsharingspringboot.entity.User;
 import com.example.picsharingspringboot.mapper.UserMapper;
 import com.example.picsharingspringboot.service.UserService;
+import com.example.picsharingspringboot.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public void banUser(Integer id) {
         userMapper.banUser(id);
     }
-//    用户登录
+//    管理员登录
     @Override
     public boolean adminLogin(User user) {
         User userReal = userMapper.getUserInfo(user);
@@ -50,6 +51,43 @@ public class UserServiceImpl implements UserService {
             else {
                 return false;
             }
+        }
+        else {
+            return false;
+        }
+    }
+//    普通用户登录
+    @Override
+    public boolean userLogin(User user) {
+        User userReal = userMapper.getUserInfo(user);
+//        md5加密
+        String salt = userReal.getSalt();
+        String md5Password = MD5Util.getSaltMD5(user.getPassword(), salt);
+        user.setPassword(md5Password);
+        if (userReal!=null){
+            if (user.getPassword().equals(userReal.getPassword()) && userReal.getIsDelete()!=1){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean userRegister(User user) {
+//        密码通过md5加密
+        String salt = MD5Util.generateSalt();
+        user.setSalt(salt);
+        // 加盐后的MD5值
+        String md5Password = MD5Util.getSaltMD5(user.getPassword(), salt);
+        user.setPassword(md5Password);
+        int judge = userMapper.addUser(user);
+        if (judge!=0){
+            return true;
         }
         else {
             return false;

@@ -61,6 +61,7 @@
     <div style="margin-top: 20px">
       <el-pagination
           background
+          page-size="5"
           :current-page="params.pageNum"
           :current-size="params.pageSize"
           layout="prev, pager, next"
@@ -85,7 +86,7 @@ export default {
       params:{
         username:'',
         pageNum:1,
-        pageSize:10
+        pageSize:5
       }
     }
   },
@@ -122,7 +123,7 @@ export default {
     },
     // 漫画搜索结果页面，分页导航栏数据reset
     reset(){
-      this.params.pageSize=10
+      this.params.pageSize=5
       this.params.pageNum=1
       this.judge=1
     },

@@ -14,4 +14,8 @@ public interface UserService {
     void banUser(Integer id);
 
     boolean adminLogin(User user);
+
+    boolean userLogin(User user);
+
+    boolean userRegister(User user);
 }
