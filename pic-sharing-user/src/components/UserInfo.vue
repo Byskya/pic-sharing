@@ -1,0 +1,15 @@
+<template>
+<div>
+  用户信息界面
+</div>
+</template>
+
+<script>
+export default {
+  name: "UserInfo"
+}
+</script>
+
+<style scoped>
+
+</style>

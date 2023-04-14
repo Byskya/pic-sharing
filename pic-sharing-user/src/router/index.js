@@ -5,6 +5,8 @@ import Layout from "@/views/Layout"
 import Index from "@/views/Index";
 import LoginView from "@/views/login/LoginView";
 import RegisterView from "@/views/login/RegisterView";
+import MyWorksView from "@/views/work/MyWorksView";
+import MyInfoView from "@/views/user/MyInfoView";
 
 Vue.use(VueRouter)
 
@@ -34,9 +36,19 @@ const routes = [
         path: 'home',
         name: 'home',
         component: HomeView
+      },
+      {
+        path: 'myWorks',
+        name: 'myWorks',
+        component: MyWorksView
+      },
+      {
+        path: 'myInfo',
+        name: 'myInfo',
+        component: MyInfoView
       }
     ]
-  }
+  },
   // {
   //   path: '/about',
   //   name: 'about',

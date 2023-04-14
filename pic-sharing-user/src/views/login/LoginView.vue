@@ -54,6 +54,7 @@ export default {
               this.$message.success("登录成功")
               //设置路由守卫的的登录判断变量
               localStorage.setItem('isLoggedIn','true')
+              this.$store.dispatch('login',response.data.data);
               this.$router.push('/')
             }
             else {

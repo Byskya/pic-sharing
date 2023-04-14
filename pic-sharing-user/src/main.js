@@ -6,7 +6,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-
+//设置axios发送的请求携带cookie
+axios.defaults.withCredentials = true;
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);

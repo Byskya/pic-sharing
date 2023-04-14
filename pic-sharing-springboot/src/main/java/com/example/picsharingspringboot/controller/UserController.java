@@ -3,15 +3,16 @@ package com.example.picsharingspringboot.controller;
 import com.example.picsharingspringboot.entity.User;
 import com.example.picsharingspringboot.service.UserService;
 import com.example.picsharingspringboot.util.ResponseResult;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+//设置接收前端发送请求中携带的cookie
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081"}, allowCredentials = "true")
 @RestController
 public class UserController {
     @Autowired
@@ -85,11 +86,17 @@ public class UserController {
     }
     //    普通用户登录
     @PostMapping("/user/login")
-    public ResponseResult<User> userLogin(@RequestBody User user){
+    public ResponseResult<User> userLogin(@RequestBody User user, HttpSession session){
         ResponseResult<User> rr = new ResponseResult<>();
-        boolean judge2 = userService.userLogin(user);
-        if (judge2){
-            rr.setData(user);
+        User userReal = userService.userLogin(user);
+        //把用户登录信息保存到session中
+        User userSession = new User();
+        userSession.setId(userReal.getId());
+        userSession.setUsername(userReal.getUsername());
+        userSession.setEmail(userReal.getEmail());
+        if (userReal!=null){
+            session.setAttribute("user",userSession);
+            rr.setData(userSession);
             rr.setState(200);
             rr.setMessage("用户登录成功");
         }
@@ -115,6 +122,24 @@ public class UserController {
             rr.setData(null);
             rr.setState(500);
             rr.setMessage("用户已存在或其他错误，请重试");
+        }
+        return rr;
+    }
+    //获取当前登录用户的信息
+    @GetMapping("/user/get/info")
+    public ResponseResult<User> userInfo(HttpSession session) throws IOException {
+        ResponseResult<User> rr = new ResponseResult<>();
+        User user = (User)session.getAttribute("user");
+        User userInfo =  userService.getUserInfo(user);
+        if (userInfo!=null){
+            rr.setData(userInfo);
+            rr.setState(200);
+            rr.setMessage("获取用户信息成功");
+        }
+        else {
+            rr.setData(null);
+            rr.setState(200);
+            rr.setMessage("获取用户信息失败");
         }
         return rr;
     }

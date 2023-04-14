@@ -15,7 +15,9 @@ public interface UserService {
 
     boolean adminLogin(User user);
 
-    boolean userLogin(User user);
+    User userLogin(User user);
 
     boolean userRegister(User user);
+
+    User getUserInfo(User user);
 }

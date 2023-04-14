@@ -58,22 +58,22 @@ public class UserServiceImpl implements UserService {
     }
 //    普通用户登录
     @Override
-    public boolean userLogin(User user) {
+    public User userLogin(User user) {
         User userReal = userMapper.getUserInfo(user);
 //        md5加密
         String salt = userReal.getSalt();
         String md5Password = MD5Util.getSaltMD5(user.getPassword(), salt);
         user.setPassword(md5Password);
         if (userReal!=null){
-            if (user.getPassword().equals(userReal.getPassword()) && userReal.getIsDelete()!=1){
-                return true;
+            if (userReal.getPassword().equals(md5Password) && userReal.getIsDelete() != 1){
+                return userReal;
             }
-            else{
-                return false;
+            else {
+                return null;
             }
         }
         else {
-            return false;
+            return null;
         }
     }
 
@@ -92,5 +92,11 @@ public class UserServiceImpl implements UserService {
         else {
             return false;
         }
+    }
+
+    @Override
+    public User getUserInfo(User user) {
+        User userInfo = userMapper.getUserInfo(user);
+        return userInfo;
     }
 }

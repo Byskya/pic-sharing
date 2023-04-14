@@ -2,6 +2,7 @@ package com.example.picsharingspringboot.entity;
 
 import lombok.*;
 
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class User extends BaseEntity{
     private String email;
     private String phoneNumber;
     private Date birthday;
-    private String avatar;
+    private byte[] avatar;
     private String address;
     private boolean isUser;
     private boolean isAdmin;
