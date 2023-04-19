@@ -2,9 +2,8 @@ package com.example.picsharingspringboot.entity;
 
 import lombok.*;
 
-import java.sql.Blob;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.sql.Date;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -17,6 +16,7 @@ public class User extends BaseEntity{
     private String username;
     private String password;
     private char gender;
+    private Integer age;
     private String email;
     private String phoneNumber;
     private Date birthday;

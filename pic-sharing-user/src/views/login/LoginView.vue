@@ -81,6 +81,7 @@ export default {
   align-items: center;
   min-height: 98vh;
   background-color: #f7d9e9;
+  /*壁纸随机获取用户的插画图片*/
   background-image: url(https://cdn.pixabay.com/photo/2016/12/23/03/23/anime-1920599_960_720.png);
   background-repeat: no-repeat;
   background-size: cover;

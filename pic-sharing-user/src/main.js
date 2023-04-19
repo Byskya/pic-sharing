@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue, {onMounted} from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -12,9 +12,14 @@ axios.defaults.withCredentials = true;
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios)
-
-new Vue({
+const vm = new Vue({
   router,
   store,
+  // 全局事件注册，在每次实例重新创建后重新注册
+  created() {
+    Vue.prototype.$bus = this
+  },
   render: h => h(App)
 }).$mount('#app')
+
+

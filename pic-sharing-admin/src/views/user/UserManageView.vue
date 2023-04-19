@@ -61,7 +61,6 @@
     <div style="margin-top: 20px">
       <el-pagination
           background
-          page-size="5"
           :current-page="params.pageNum"
           :current-size="params.pageSize"
           layout="prev, pager, next"

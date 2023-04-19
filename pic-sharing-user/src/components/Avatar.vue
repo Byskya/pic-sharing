@@ -2,7 +2,8 @@
   <div class="user-menu">
     <el-dropdown trigger="click">
       <span class="avatar">
-        <img :src="'data:image/png;base64,' + avatarData" alt="User Avatar">
+        <img v-if="avatarData!=null" :src="'data:image/*;base64,'+avatarData" alt="User Avatar">
+        <img v-else src="@/assets/headbg.jpg" alt="User Avatar">
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>
@@ -13,7 +14,7 @@
         </el-dropdown-item>
         <el-dropdown-item>收藏</el-dropdown-item>
         <el-dropdown-item>浏览记录</el-dropdown-item>
-        <el-dropdown-item>退出登录</el-dropdown-item>
+        <el-dropdown-item><a @click="loginOut">退出登录</a></el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -26,7 +27,7 @@ export default {
   name:'Avatar',
   data(){
     return{
-      user:{}
+      user:{},
     }
   },
   created() {
@@ -38,7 +39,7 @@ export default {
     ...mapState({
       isAuthenticated: state => state.isAuthenticated,
       //优先使用vuex中的user对象
-      user: state=>state.user
+      // user: state=>state.user
     }),
     avatarData:{
       get(){
@@ -47,6 +48,11 @@ export default {
     }
   },
   methods:{
+    loginOut(){
+      localStorage.setItem('isLoggedIn','false')
+      this.$message.success("退出登录成功")
+      this.$router.push('index')
+    },
     toMyWorks(){
       this.$router.push({
         name:'myWorks'

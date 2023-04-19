@@ -7,6 +7,7 @@ import LoginView from "@/views/login/LoginView";
 import RegisterView from "@/views/login/RegisterView";
 import MyWorksView from "@/views/work/MyWorksView";
 import MyInfoView from "@/views/user/MyInfoView";
+import UploadWorkView from "@/views/work/UploadWorkView";
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,11 @@ const routes = [
         path: 'myInfo',
         name: 'myInfo',
         component: MyInfoView
+      },
+      {
+        path:'uploadWork',
+        name:'uploadWork',
+        component: UploadWorkView
       }
     ]
   },

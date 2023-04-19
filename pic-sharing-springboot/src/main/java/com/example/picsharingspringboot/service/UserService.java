@@ -20,4 +20,6 @@ public interface UserService {
     boolean userRegister(User user);
 
     User getUserInfo(User user);
+
+    boolean editUserInfo(User user);
 }

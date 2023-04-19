@@ -96,7 +96,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserInfo(User user) {
-        User userInfo = userMapper.getUserInfo(user);
+        User userInfo = userMapper.getUserInfoById(user);
         return userInfo;
+    }
+
+    @Override
+    public boolean editUserInfo(User user) {
+        boolean judge = userMapper.editUserInfo(user);
+        return judge;
     }
 }

@@ -12,6 +12,9 @@
     <update id="banUser">
         UPDATE t_user SET is_delete = CASE is_delete WHEN 0 THEN 1 ELSE 0 END WHERE id = #{id}
     </update>
+    <update id="editUserInfo">
+        update t_user set username=#{username},avatar=#{avatar,jdbcType=BLOB}, gender=#{gender},birthday=#{birthday},address=#{address} where id=#{id}
+    </update>
     <select id="getAllUser" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user
     </select>
@@ -20,5 +23,8 @@
     </select>
     <select id="getUserInfo" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user where username = #{username}
+    </select>
+    <select id="getUserInfoById" resultType="com.example.picsharingspringboot.entity.User">
+        select * from t_user where id = #{id}
     </select>
 </mapper>
