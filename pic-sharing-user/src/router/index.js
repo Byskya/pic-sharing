@@ -8,6 +8,11 @@ import RegisterView from "@/views/login/RegisterView";
 import MyWorksView from "@/views/work/MyWorksView";
 import MyInfoView from "@/views/user/MyInfoView";
 import UploadWorkView from "@/views/work/UploadWorkView";
+import WorkDetailView from "@/views/work/WorkDetailView";
+import WorkTypeView from "../../../pic-sharing-admin/src/views/type/WorkTypeView";
+import WorkRankView from "../../../pic-sharing-admin/src/views/rank/WorkRankView";
+import ReviewScheduleView from "@/views/work/ReviewScheduleView";
+import MyCollectionView from "@/views/user/MyCollectionView";
 
 Vue.use(VueRouter)
 
@@ -49,9 +54,34 @@ const routes = [
         component: MyInfoView
       },
       {
+        path: 'myCollection',
+        name: 'myCollection',
+        component: MyCollectionView
+      },
+      {
         path:'uploadWork',
         name:'uploadWork',
         component: UploadWorkView
+      },
+      {
+        path: 'workDetail',
+        name: 'workDetail',
+        component: WorkDetailView
+      },
+      {
+        path: 'workType',
+        name: 'workType',
+        component: WorkTypeView
+      },
+      {
+        path: 'workRank',
+        name: 'workRank',
+        component: WorkRankView
+      },
+      {
+        path: 'reviewSchedule',
+        name: 'reviewSchedule',
+        component: ReviewScheduleView
       }
     ]
   },

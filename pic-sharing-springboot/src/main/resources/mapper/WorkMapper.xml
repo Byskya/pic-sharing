@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.picsharingspringboot.mapper.WorkMapper">
     <insert id="insertImage" useGeneratedKeys="true" keyProperty = "id">
-        insert into images (url)
-        values (#{url})
+        insert into images (url,thumbnail_path)
+        values (#{url},#{thumbnailPath})
     </insert>
     <insert id="insertIllustration" useGeneratedKeys="true" keyProperty = "id">
         insert into illustrations (title,description,user_id,image_id) values (#{title},#{description},#{userId},#{imageId})
@@ -16,13 +16,67 @@
             (#{item.illustrationId},#{item.tagId})
         </foreach>
     </insert>
+    <insert id="addCommentByWorkId" useGeneratedKeys="true" keyProperty="id">
+        insert into comments (user_id,illustration_id,content) values (#{userId},#{illustrationId},#{content})
+    </insert>
+    <insert id="collectWork" useGeneratedKeys="true" keyProperty="id">
+        insert into favorites (user_id,illustration_id) values(#{userId},#{illustrationId})
+    </insert>
+    <insert id="addAuditInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into audit_info (user_id,illustration_id,status) values(#{userId},#{illustrationId},#{status})
+    </insert>
+    <update id="upWorkViews">
+        update illustrations set views = #{views} where id = #{id}
+    </update>
+    <update id="upWorkLike">
+        update illustrations set likes = #{likes} where id = #{id}
+    </update>
+    <update id="reviewPass">
+        update illustrations set approved = 1 where id = #{id}
+    </update>
+    <update id="updateAuditTable">
+        update audit_info
+        <set>
+            <if test="status != null ">
+                status = #{status}
+            </if>
+            <if test="feedback != null">
+                , feedback = #{feedback}
+            </if>
+        </set>
+        where illustration_id = #{illustrationId}
+    </update>
+    <delete id="deleteCollect">
+        DELETE from favorites where user_id = #{userId} and illustration_id = #{illustrationId}
+    </delete>
     <select id="getAllTags" resultType="com.example.picsharingspringboot.entity.IllustrationTag">
         select * from illustration_tags
     </select>
     <select id="getAllUserIllustrations" resultType="com.example.picsharingspringboot.entity.Illustration">
-        select i.*,im.url as imageUrl from illustrations i join images im on i.image_id = im.id where user_id = #{userId}
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where user_id = #{userId}
     </select>
     <select id="getImageById" resultType="com.example.picsharingspringboot.entity.Image">
         select * from images where id = #{imageId}
+    </select>
+    <select id="getWorkTagsById" resultType="com.example.picsharingspringboot.entity.IllustrationTag">
+        select t.id,t.tag_name from illustration_tags t join illustration_tag_map m on t.id = m.tag_id where m.illustration_id = #{workId}
+    </select>
+    <select id="getAllIllustration" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where approved = 1
+    </select>
+    <select id="getIllustrationCommentById" resultType="com.example.picsharingspringboot.entity.Comment">
+        select c.*,u.username,u.avatar from comments c join t_user u on c.user_id = u.id where illustration_id = #{workId}
+    </select>
+    <select id="getIllustrationById" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl from illustrations i join images im on i.image_id = im.id where i.id = #{id}
+    </select>
+    <select id="checkCollect" resultType="com.example.picsharingspringboot.entity.Favorite">
+        select * from favorites where user_id = #{userId} and illustration_id = #{illustrationId}
+    </select>
+    <select id="getNotApprovedWorks" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id join audit_info a on a.illustration_id=i.id  where approved = 0 and a.status!='不通过'
+    </select>
+    <select id="getAuditInfoByWorkId" resultType="com.example.picsharingspringboot.entity.AuditInfo">
+        select * from audit_info where illustration_id = #{workId}
     </select>
 </mapper>

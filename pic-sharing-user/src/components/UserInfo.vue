@@ -4,7 +4,8 @@
 <!--      用户信息显示页面-->
       <div v-if="showContent">
         <div class="user-info">
-          <el-avatar :src="'data:image/*;base64,' + user.avatar" :size="80"></el-avatar>
+          <el-avatar v-if="user.avatar!=null" :src="'data:image/*;base64,'+user.avatar" :size="80"></el-avatar>
+          <el-avatar v-else :src="headerBg" :size="80"></el-avatar>
           <div class="info">
             <div class="name">{{ user.username }}</div>
             <div class="address">{{ user.address }}</div>
@@ -62,10 +63,13 @@
 </template>
 
 <script>
+import headerBg from '@/assets/headbg.jpg'
 export default {
   name: "UserInfo",
   data(){
     return{
+      // 用户头像背景
+      headerBg,
       // 用户上传头像
       imageUrl: null,
       // 表单数据

@@ -1,9 +1,6 @@
 package com.example.picsharingspringboot.service;
 
-import com.example.picsharingspringboot.entity.Illustration;
-import com.example.picsharingspringboot.entity.IllustrationTag;
-import com.example.picsharingspringboot.entity.Image;
-import com.example.picsharingspringboot.entity.MapIllustrationTag;
+import com.example.picsharingspringboot.entity.*;
 
 import java.util.List;
 
@@ -19,4 +16,34 @@ public interface WorkService {
     List<Illustration> getUserAllIllustration(Integer userId);
 
     Image getImageById(Integer imageId);
+
+    List<IllustrationTag> getWorkTagsById(Integer workId);
+
+    List<Illustration> getAllIllustration();
+
+    boolean addCommentByWorkId(Comment comment);
+
+    List<Comment> getIllustrationCommentById(Integer workId);
+
+    Illustration getIllustrationById(Illustration illustration);
+
+    boolean upWorkViews(Illustration illustration);
+
+    boolean upWorkLikes(Illustration illustration);
+
+    boolean collectWork(Favorite favorite);
+
+    Favorite checkCollect(Favorite favorite);
+
+    boolean deleteCollect(Favorite favorite);
+
+    List<Illustration> getNotApprovedWorks();
+
+    boolean reviewPass(Illustration illustration);
+
+    boolean updateAuditTable(AuditInfo auditInfo);
+
+    boolean addAuditInfo(AuditInfo auditInfo);
+
+    AuditInfo getAuditInfoByWorkId(Integer workId);
 }

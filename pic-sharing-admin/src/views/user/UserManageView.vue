@@ -61,6 +61,7 @@
     <div style="margin-top: 20px">
       <el-pagination
           background
+          :page-size="5"
           :current-page="params.pageNum"
           :current-size="params.pageSize"
           layout="prev, pager, next"
@@ -104,6 +105,7 @@ export default {
           if(response.status === 200){
             this.tableData=response.data.data.list
             this.total = response.data.data.total
+            console.log(this.total)
           }
         }).catch(error=>{
           console.log(error)
@@ -187,7 +189,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .el-table .ban {
   background: #d99494;
 }

@@ -1,9 +1,6 @@
 package com.example.picsharingspringboot.service.impl;
 
-import com.example.picsharingspringboot.entity.Illustration;
-import com.example.picsharingspringboot.entity.IllustrationTag;
-import com.example.picsharingspringboot.entity.Image;
-import com.example.picsharingspringboot.entity.MapIllustrationTag;
+import com.example.picsharingspringboot.entity.*;
 import com.example.picsharingspringboot.mapper.WorkMapper;
 import com.example.picsharingspringboot.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +67,83 @@ public class WorkServiceImpl implements WorkService {
         else {
             return null;
         }
+    }
+
+    @Override
+    public List<IllustrationTag> getWorkTagsById(Integer workId) {
+        List<IllustrationTag> tags = workMapper.getWorkTagsById(workId);
+        return tags;
+    }
+
+    @Override
+    public List<Illustration> getAllIllustration() {
+        List<Illustration> list = workMapper.getAllIllustration();
+        return list;
+    }
+
+    @Override
+    public boolean addCommentByWorkId(Comment comment) {
+        boolean judge = workMapper.addCommentByWorkId(comment);
+        return judge;
+    }
+
+    @Override
+    public List<Comment> getIllustrationCommentById(Integer workId) {
+        return workMapper.getIllustrationCommentById(workId);
+    }
+
+    @Override
+    public Illustration getIllustrationById(Illustration illustration) {
+        return workMapper.getIllustrationById(illustration);
+    }
+
+    @Override
+    public boolean upWorkViews(Illustration illustration) {
+        return workMapper.upWorkViews(illustration);
+    }
+
+    @Override
+    public boolean upWorkLikes(Illustration illustration) {
+        return workMapper.upWorkLike(illustration);
+    }
+
+    @Override
+    public boolean collectWork(Favorite favorite) {
+        return workMapper.collectWork(favorite);
+    }
+
+    @Override
+    public Favorite checkCollect(Favorite favorite) {
+        return workMapper.checkCollect(favorite);
+    }
+
+    @Override
+    public boolean deleteCollect(Favorite favorite) {
+        return workMapper.deleteCollect(favorite);
+    }
+
+    @Override
+    public List<Illustration> getNotApprovedWorks() {
+        return workMapper.getNotApprovedWorks();
+    }
+
+    @Override
+    public boolean reviewPass(Illustration illustration) {
+        return workMapper.reviewPass(illustration);
+    }
+
+    @Override
+    public boolean updateAuditTable(AuditInfo auditInfo) {
+        return workMapper.updateAuditTable(auditInfo);
+    }
+
+    @Override
+    public boolean addAuditInfo(AuditInfo auditInfo) {
+        return workMapper.addAuditInfo(auditInfo);
+    }
+
+    @Override
+    public AuditInfo getAuditInfoByWorkId(Integer workId) {
+        return workMapper.getAuditInfoByWorkId(workId);
     }
 }

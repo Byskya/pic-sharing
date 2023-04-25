@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
+//闲置中
 public class FileUtil {
     /**
      * 将文件转换成byte[]数组

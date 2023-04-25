@@ -11,13 +11,8 @@
     <div style="align-self: flex-start">
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <Avatar></Avatar>
-        </div>
-        <div style="align-self: end;">
-          <div>
-            <h3>{{user.username}}</h3>
-            <el-button @click="displayWin">查看个人信息</el-button>
-          </div>
+          <UserInfoMini :user="user" :size="80"></UserInfoMini>
+          <el-button @click="displayWin">查看个人信息</el-button>
         </div>
       </div>
     </div>
@@ -28,7 +23,17 @@
   </div>
 <!--  作品区-->
   <div>
-    个人精选作品区or收藏区
+    <el-row>
+      <el-col :span="24"><div class="grid-content bg-purple-dark">
+        <h2>个人作品精选区</h2>
+      </div></el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+    </el-row>
 
   </div>
   <div>
@@ -40,10 +45,11 @@
 <script>
 import Avatar from "@/components/Avatar";
 import UserInfo from "@/components/UserInfo";
+import UserInfoMini from "@/components/UserInfoMini";
 
 export default {
   name: "MyInfoView",
-  components: {Avatar},
+  components: {UserInfoMini, Avatar},
   data(){
     return{
       user:{},
@@ -102,5 +108,31 @@ export default {
 .myInfo{
   display: flex;
   justify-content: space-between;
+}
+.el-row {
+  margin-bottom: 20px;
+&:last-child {
+   margin-bottom: 0;
+ }
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
 }
 </style>

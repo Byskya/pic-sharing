@@ -7,9 +7,9 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @AllArgsConstructor
-public class Image extends BaseEntity{
-    private static final long serialVersionUID = 8613159143285171699L;
+public class Favorite extends BaseEntity{
+    private static final long serialVersionUID = -3247483800791498037L;
     private Integer id;
-    private String url;
-    private String thumbnailPath;
+    private Integer userId;
+    private Integer illustrationId;
 }

@@ -19,6 +19,10 @@ public class Illustration extends BaseEntity{
     private Integer userId;
     private Integer imageId;
     private String imageUrl;
+
     private byte[] imageResource;
+//    缩略图路径
+    private String thumbnailUrl;
     private List<IllustrationTag> tags;
+    private boolean approved;
 }

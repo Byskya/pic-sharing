@@ -1,6 +1,6 @@
 <template>
   <div class="card-list">
-    <el-empty v-if="total===0">
+    <el-empty v-if="total===0" v-loading="loading">
       <el-button type="primary" @click="toUploadView">投稿作品</el-button>
     </el-empty>
     <div v-else>
@@ -9,10 +9,13 @@
           <el-card class="card" :body-style="{ padding: '0px' }">
             <img :src="'data:image/png;base64,' + item.imageResource" class="image">
             <div class="content">
-              <div class="title">{{ item.title}}</div>
+              <div class="title">{{ item.title}}
+              <span v-if="!item.approved" style="color:red">(审核未通过)</span>
+              </div>
               <div class="bottom clearfix">
                 <time class="time">{{new Date(item.createdAt)}}</time>
-                <el-button type="text" class="button">操作按钮</el-button>
+                <el-button v-if="item.approved" type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
+                <el-button v-else type="text" class="button" @click="toReviewSchedule(item)">查看审核进度</el-button>
               </div>
             </div>
           </el-card>
@@ -21,6 +24,7 @@
       <div style="display: flex; justify-content: center;margin-top: 20px">
         <el-pagination
             background
+            :page-size="10"
             :current-page="params.pageNum"
             :current-size="params.pageSize"
             layout="prev, pager, next"
@@ -40,6 +44,7 @@ export default {
   name: "MyWorksView",
   data() {
     return {
+      loading: true,
       currentDate: Date,
       // 用户的插画列表
       cardList:[],
@@ -59,11 +64,46 @@ export default {
     this.load()
   },
   methods:{
+    toReviewSchedule(item){
+      const id = item.id
+      const title = item.title
+      const userId = item.userId
+      const workInfo = {
+        id,
+        title,
+        userId,
+      }
+      const itemJson = JSON.stringify(workInfo)
+      this.$router.push({
+        name:'reviewSchedule',
+        query:{
+          itemJson
+        }
+      })
+    },
+    toWorkDetail(item){
+      const id = item.id
+      const title = item.title
+      const userId = item.userId
+      const workInfo = {
+        id,
+        title,
+        userId,
+      }
+      const itemJson = JSON.stringify(workInfo)
+      this.$router.push({
+        name:'workDetail',
+        query:{
+          itemJson
+        }
+      })
+    },
     load(){
       this.axios.get('http://localhost:9090/user/allIllustration/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
           this.cardList = response.data.data.list
           this.total = response.data.data.total
+          this.loading = false
         }
       }).catch(error=>{
         console.log(error)

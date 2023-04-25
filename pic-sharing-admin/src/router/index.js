@@ -7,6 +7,8 @@ import MessageView from "@/views/message/MessageView";
 import UserUpdate from "@/views/user/UserUpdate";
 import Login from "@/views/Login";
 import Layout from "@/views/Layout";
+import ReviewWorkView from "@/views/work/ReviewWorkView";
+import RemoveWorkView from "@/views/work/RemoveWorkView";
 
 Vue.use(VueRouter)
 
@@ -51,6 +53,16 @@ const routes = [
         path: 'userUpdate',
         name: 'userUpdate',
         component: UserUpdate
+      },
+      {
+        path: 'reviewWork',
+        name:'reviewWork',
+        component: ReviewWorkView
+      },
+      {
+        path: 'removeWork',
+        name:'removeWork',
+        component: RemoveWorkView
       }
     ]
   }

@@ -12,7 +12,7 @@
         <el-dropdown-item>
           <a @click="toMyWorks">我的作品</a>
         </el-dropdown-item>
-        <el-dropdown-item>收藏</el-dropdown-item>
+        <el-dropdown-item><a @click="toCollection">收藏</a></el-dropdown-item>
         <el-dropdown-item>浏览记录</el-dropdown-item>
         <el-dropdown-item><a @click="loginOut">退出登录</a></el-dropdown-item>
       </el-dropdown-menu>
@@ -48,6 +48,12 @@ export default {
     }
   },
   methods:{
+    // 跳转到收藏夹
+    toCollection(){
+      this.$router.push({
+        name:'myCollection'
+      })
+    },
     loginOut(){
       localStorage.setItem('isLoggedIn','false')
       this.$message.success("退出登录成功")

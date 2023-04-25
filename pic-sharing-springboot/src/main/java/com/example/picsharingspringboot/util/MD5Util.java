@@ -2,6 +2,7 @@ package com.example.picsharingspringboot.util;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+//密码加密
 public class MD5Util {
     // 获取字符串的MD5值
     public static String getMD5(String message) {

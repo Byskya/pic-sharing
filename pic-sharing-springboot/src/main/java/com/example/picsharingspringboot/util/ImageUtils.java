@@ -1,7 +1,7 @@
 package com.example.picsharingspringboot.util;
 
 import java.io.*;
-
+//图片的流传输工具
 public class ImageUtils {
     // 从指定路径读取图片文件并返回字节数组
     public static byte[] readImage(String path) throws IOException {

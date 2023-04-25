@@ -20,8 +20,8 @@
               <i class="el-icon-picture"></i>
               <span>作品管理</span>
             </template>
-            <el-menu-item index="2-1">审核</el-menu-item>
-            <el-menu-item index="2-2">下架</el-menu-item>
+            <el-menu-item index="/reviewWork">审核</el-menu-item>
+            <el-menu-item index="/removeWork">下架</el-menu-item>
           </el-submenu>
           <el-menu-item index="/message">
             <i class="el-icon-message-solid"></i>
@@ -34,7 +34,7 @@
         </el-menu>
       </div>
       <!--      内容区-->
-      <div>
+      <div style="width: 100%">
         <router-view/>
       </div>
     </div>

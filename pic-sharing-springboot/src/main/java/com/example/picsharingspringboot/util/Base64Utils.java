@@ -1,7 +1,7 @@
 package com.example.picsharingspringboot.util;
 
 import java.util.Base64;
-
+//闲置中
 public class Base64Utils {
     /**
      * 将byte数组转换成Base64字符串

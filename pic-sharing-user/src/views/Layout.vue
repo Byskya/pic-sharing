@@ -10,7 +10,11 @@
         :with-header="false"
         direction="ltr"
         size="300px">
-      <span>我来啦!</span>
+      <el-menu :default-active="$route.path" :router="true" class="el-menu-demo" @select="handleSelect">
+        <el-menu-item index="home">首页</el-menu-item>
+        <el-menu-item index="workType">分类</el-menu-item>
+        <el-menu-item index="workRank">排行榜</el-menu-item>
+      </el-menu>
     </el-drawer>
     <div class="content-container">
       <!-- 内容区域 -->
@@ -55,6 +59,10 @@ export default {
     this.load()
   },
   methods: {
+    // 导航栏相关方法
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
+    },
     load(){
       this.axios.get('http://localhost:9090/user/get/info').then(response=>{
         if (response.status===200){
