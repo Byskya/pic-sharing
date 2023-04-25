@@ -3,7 +3,7 @@
     <el-dropdown trigger="click">
       <span class="avatar">
         <img v-if="avatarData!=null" :src="'data:image/*;base64,'+avatarData" alt="User Avatar">
-        <img v-else src="@/assets/headbg.jpg" alt="User Avatar">
+        <img v-else src="@/assets/headbg.jpg" alt="User Avatar" @click="toLogin">
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>
@@ -27,6 +27,8 @@ export default {
   name:'Avatar',
   data(){
     return{
+      // 判断是否为用户自己的信息
+      isMine:'yes',
       user:{},
     }
   },
@@ -54,6 +56,11 @@ export default {
         name:'myCollection'
       })
     },
+    toLogin(){
+      localStorage.setItem('isLoggedIn','false')
+      this.$message.success("跳转登录")
+      this.$router.push('index')
+    },
     loginOut(){
       localStorage.setItem('isLoggedIn','false')
       this.$message.success("退出登录成功")
@@ -61,12 +68,16 @@ export default {
     },
     toMyWorks(){
       this.$router.push({
-        name:'myWorks'
+        name:'myWorks',
       })
     },
     toMyInfo(){
+      const isMine = JSON.stringify(this.isMine)
       this.$router.push({
-        name:'myInfo'
+        name:'myInfo',
+        query:{
+          isMine
+        }
       })
     },
     load(){

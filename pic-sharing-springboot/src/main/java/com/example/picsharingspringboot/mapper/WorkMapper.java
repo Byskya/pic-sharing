@@ -50,4 +50,8 @@ public interface WorkMapper {
     boolean addAuditInfo(AuditInfo auditInfo);
 
     AuditInfo getAuditInfoByWorkId(Integer workId);
+
+    List<Illustration> getUserCollection(User user);
+
+    List<Illustration> getIllustrationsByKeyword(String keyword);
 }

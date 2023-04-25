@@ -24,15 +24,6 @@ import java.util.Locale;
 public class UserController {
     @Autowired
     private UserService userService;
-////    获取所有用户数据
-//    @RequestMapping("/get/allUser")
-//    public ResponseResult<List<User>> getAllUser(){
-//        List<User> allUser = userService.getAllUser();
-//        ResponseResult<List<User>> rr = new ResponseResult<List<User>>();
-//        rr.setData(allUser);
-//        rr.setState(200);
-//        return rr;
-//    }
 //    模糊查询
     @RequestMapping("/search/user/{username}/{pageNum}/{pageSize}")
     public ResponseResult<PageInfo<User>> getUserBycondition(@PathVariable("username") String username,@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize){
@@ -192,8 +183,27 @@ public class UserController {
         }
         else {
             rr.setData(null);
-            rr.setState(200);
+            rr.setState(500);
             rr.setMessage("获取用户信息失败");
+        }
+        return rr;
+    }
+    //    根据用户id查找用户
+    @GetMapping("/user/info/{userId}")
+    public ResponseResult<User> getUserInfoById(@PathVariable("userId")Integer userId) throws IOException {
+        ResponseResult<User> rr = new ResponseResult<>();
+        User user = new User();
+        user.setId(userId);
+        User userInfo =  userService.getUserInfo(user);
+        if (userInfo!=null){
+            rr.setData(userInfo);
+            rr.setState(200);
+            rr.setMessage("作者信息加载成功");
+        }
+        else {
+            rr.setData(null);
+            rr.setState(500);
+            rr.setMessage("作者信息加载失败");
         }
         return rr;
     }

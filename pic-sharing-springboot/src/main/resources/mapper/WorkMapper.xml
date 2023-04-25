@@ -79,4 +79,10 @@
     <select id="getAuditInfoByWorkId" resultType="com.example.picsharingspringboot.entity.AuditInfo">
         select * from audit_info where illustration_id = #{workId}
     </select>
+    <select id="getUserCollection" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id join favorites f on f.illustration_id = i.id where f.user_id = #{id}
+    </select>
+    <select id="getIllustrationsByKeyword" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where i.title like concat('%',#{keyword},'%')
+    </select>
 </mapper>

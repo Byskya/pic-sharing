@@ -146,4 +146,14 @@ public class WorkServiceImpl implements WorkService {
     public AuditInfo getAuditInfoByWorkId(Integer workId) {
         return workMapper.getAuditInfoByWorkId(workId);
     }
+
+    @Override
+    public List<Illustration> getUserCollection(User user) {
+        return workMapper.getUserCollection(user);
+    }
+
+    @Override
+    public List<Illustration> searchWorkByKeyword(String keyword) {
+        return workMapper.getIllustrationsByKeyword(keyword);
+    }
 }

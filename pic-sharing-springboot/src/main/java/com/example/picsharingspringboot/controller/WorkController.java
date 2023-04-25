@@ -10,7 +10,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -23,6 +22,72 @@ import java.util.*;
 @CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081"}, allowCredentials = "true")
 @RestController
 public class WorkController {
+    @GetMapping("/search/work/{keyword}/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<Illustration>> searchWork(@PathVariable("keyword") String keyword,@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize") Integer pageSize) throws IOException {
+        PageHelper.startPage(pageNum,pageSize);
+        ResponseResult<PageInfo<Illustration>> rr = new ResponseResult<>();
+        List<Illustration> list = workService.searchWorkByKeyword(keyword);
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        PageInfo<Illustration> pageInfo = new PageInfo<>(list);
+        if (!list.isEmpty()){
+            rr.setMessage("搜索成功");
+            rr.setData(pageInfo);
+            rr.setState(200);
+        }
+        else {
+            rr.setMessage("搜索失败");
+            rr.setData(null);
+            rr.setState(500);
+        }
+        return rr;
+    }
+//    删除当前用户的指定的收藏作品
+    @PostMapping("/collection/delete/{workId}")
+    public ResponseResult<Void> deleteUserCollectionById(@PathVariable("workId")Integer workId,HttpSession session){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        User user = (User) session.getAttribute("user");
+        Favorite favorite = new Favorite();
+        favorite.setUserId(user.getId());
+        favorite.setIllustrationId(workId);
+        boolean judge= workService.deleteCollect(favorite);
+        if (judge){
+            rr.setState(200);
+            rr.setMessage("收藏删除成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("收藏删除失败");
+        }
+        return rr;
+    }
+//    获取当前用户的搜藏作品
+    @GetMapping("/work/collection/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<Illustration>> getUserCollection(@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize") Integer pageSize,HttpSession session) throws IOException {
+        PageHelper.startPage(pageNum,pageSize);
+        User user = (User) session.getAttribute("user");
+        ResponseResult<PageInfo<Illustration>> rr = new ResponseResult<>();
+        List<Illustration> list = workService.getUserCollection(user);
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        PageInfo<Illustration> pageInfo = new PageInfo<>(list);
+        if (!list.isEmpty()){
+            rr.setData(pageInfo);
+            rr.setMessage("获取用户收藏列表成功");
+            rr.setState(200);
+        }
+        else {
+            rr.setData(pageInfo);
+            rr.setMessage("获取用户搜藏列表失败");
+            rr.setState(500);
+        }
+        return rr;
+    }
+//    获取作品的审核进度
     @GetMapping("/work/timeline/{workId}")
     public ResponseResult<Map<String,Object>> getWorkTimeline(@PathVariable("workId") Integer workId){
         ResponseResult<Map<String,Object>> rr = new ResponseResult<>();
@@ -243,7 +308,6 @@ public class WorkController {
 //    根据作品id获取作品的信息
     @GetMapping("/work/{workId}")
     public ResponseResult<Illustration> getIllustrationById(@PathVariable("workId") Integer workId) throws IOException {
-        System.out.println("测试获取作品=====================");
         ResponseResult<Illustration> rr = new ResponseResult<>();
         Illustration illustration = new Illustration();
         illustration.setId(workId);

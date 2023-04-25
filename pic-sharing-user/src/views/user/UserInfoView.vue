@@ -1,45 +1,41 @@
 <template>
-<div>
-<!--  背景-->
-  <div class="bg">
-    <img src="@/assets/bg.png" height="200px" width="100%" alt="bg">
-  </div>
+  <div>
+    <!--  背景-->
+    <div class="bg">
+      <img src="@/assets/bg.png" height="200px" width="100%" alt="bg">
+    </div>
 
-<!--  个人信息区别-->
-  <div class="myInfo">
-<!--    个人信息-->
-    <div style="align-self: flex-start">
-      <div style="display: flex;justify-content: space-between;">
-        <div>
-          <UserInfoMini v-if="userInfo" :user="userInfo" :size="80"></UserInfoMini>
-          <el-button @click="displayWin">查看个人信息</el-button>
+    <!--  个人信息区别-->
+    <div class="myInfo">
+      <!--    个人信息-->
+      <div style="align-self: flex-start">
+        <div style="display: flex;justify-content: space-between;">
+          <div>
+            <UserInfoMini v-if="userInfo" :user="userInfo" :size="80"></UserInfoMini>
+            <el-button @click="displayWin">查看个人信息</el-button>
+          </div>
         </div>
       </div>
     </div>
-<!--编辑个人信息-->
-    <div style="align-self: flex-end">
-      <el-button @click="displayWin2">个人资料编辑</el-button>
+    <!--  作品区-->
+    <div>
+      <el-row>
+        <el-col :span="24"><div class="grid-content bg-purple-dark">
+          <h2>个人作品精选区</h2>
+        </div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      </el-row>
+
+    </div>
+    <div>
+      <component v-if="show" :is="popup" @close="hidePopup" :user="user" :showContent="judge"></component>
     </div>
   </div>
-<!--  作品区-->
-  <div>
-    <el-row>
-      <el-col :span="24"><div class="grid-content bg-purple-dark">
-        <h2>个人作品精选区</h2>
-      </div></el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-    </el-row>
-
-  </div>
-  <div>
-    <component v-if="show" :is="popup" @close="hidePopup" :user="user" :showContent="judge"></component>
-  </div>
-</div>
 </template>
 
 <script>
@@ -48,7 +44,7 @@ import UserInfo from "@/components/UserInfo";
 import UserInfoMini from "@/components/UserInfoMini";
 
 export default {
-  name: "MyInfoView",
+  name: "UserInfoView",
   components: {UserInfoMini, Avatar},
   data(){
     return{
@@ -62,11 +58,12 @@ export default {
   computed:{
     userInfo:{
       get(){
-        return this.$store.state.user
+        return this.user
       }
     }
   },
   created() {
+    this.user = JSON.parse(this.$route.query.userJson.toString())
     this.load()
     this.$bus.$on('showModal', () => {
       this.popup = UserInfo
@@ -89,11 +86,9 @@ export default {
       this.$bus.$emit('showModal')
     },
     load(){
-      this.axios.get('http://localhost:9090/user/get/info').then(response=>{
+      this.axios.get('http://localhost:9090/user/info/'+this.userInfo.id).then(response=>{
         if (response.status===200){
-          console.log("加载成功")
           this.user = response.data.data
-          this.$store.dispatch('login',response.data.data)
         }
         else {
           this.$message.success(response.data.data.message)

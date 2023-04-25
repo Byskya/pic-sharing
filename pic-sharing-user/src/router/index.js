@@ -13,6 +13,8 @@ import WorkTypeView from "../../../pic-sharing-admin/src/views/type/WorkTypeView
 import WorkRankView from "../../../pic-sharing-admin/src/views/rank/WorkRankView";
 import ReviewScheduleView from "@/views/work/ReviewScheduleView";
 import MyCollectionView from "@/views/user/MyCollectionView";
+import SearchResultView from "@/views/search/SearchResultView";
+import UserInfoView from "@/views/user/UserInfoView";
 
 Vue.use(VueRouter)
 
@@ -54,6 +56,11 @@ const routes = [
         component: MyInfoView
       },
       {
+        path: 'userInfo',
+        name: 'userInfo',
+        component: UserInfoView,
+      },
+      {
         path: 'myCollection',
         name: 'myCollection',
         component: MyCollectionView
@@ -82,6 +89,11 @@ const routes = [
         path: 'reviewSchedule',
         name: 'reviewSchedule',
         component: ReviewScheduleView
+      },
+      {
+        path: 'searchResult',
+        name: 'searchResult',
+        component: SearchResultView
       }
     ]
   },

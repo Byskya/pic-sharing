@@ -1,18 +1,43 @@
 <template>
-  <div class="popup">
+  <div class="popup" style="display: flex;">
     <div class="popup-content">
 <!--      用户信息显示页面-->
       <div v-if="showContent">
-        <div class="user-info">
-          <el-avatar v-if="user.avatar!=null" :src="'data:image/*;base64,'+user.avatar" :size="80"></el-avatar>
-          <el-avatar v-else :src="headerBg" :size="80"></el-avatar>
-          <div class="info">
-            <div class="name">{{ user.username }}</div>
-            <div class="address">{{ user.address }}</div>
-            <div class="gender">{{ user.gender }}</div>
-            <div class="age">{{ user.age }}岁</div>
-            <div class="birthday">{{ user.birthday }}</div>
-          </div>
+        <div class="profile">
+          <el-card class="profile-card">
+            <div slot="header" class="profile-header">
+              <el-avatar v-if="user.avatar!=null" :src="'data:image/*;base64,'+user.avatar" :size="100"></el-avatar>
+              <el-avatar v-else :src="headerBg" :size="100"></el-avatar>
+              <h2>{{ user.username }}</h2>
+            </div>
+            <div class="profile-content">
+              <h3>个人信息</h3>
+              <div class="profile-item">
+                <span class="profile-label">性别：</span>
+                <span class="profile-value">{{ user.gender }}</span>
+              </div>
+              <div class="profile-item">
+                <span class="profile-label">年龄：</span>
+                <span class="profile-value">{{ user.age }}</span>
+              </div>
+              <div class="profile-item">
+                <span class="profile-label">生日：</span>
+                <span class="profile-value">{{ user.birthday }}</span>
+              </div>
+              <div class="profile-item">
+                <span class="profile-label">邮箱：</span>
+                <span class="profile-value">{{ user.email }}</span>
+              </div>
+              <div class="profile-item">
+                <span class="profile-label">电话：</span>
+                <span class="profile-value">{{ user.phoneNumber }}</span>
+              </div>
+              <div class="profile-item">
+                <span class="profile-label">地址：</span>
+                <span class="profile-value">{{ user.address }}</span>
+              </div>
+            </div>
+          </el-card>
         </div>
       </div>
 <!--      编辑用户信息页面=====================================================================================-->
@@ -58,7 +83,7 @@
         </el-form>
       </div>
     </div>
-    <button @click="$emit('close')">关闭</button>
+    <el-button type="danger" icon="el-icon-close" @click="$emit('close')" circle></el-button>
   </div>
 </template>
 
@@ -160,6 +185,10 @@ export default {
 
 <style scoped>
 .popup {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -168,12 +197,6 @@ export default {
   padding: 20px;
   z-index: 1000;
 }
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .user-info img {
   width: 100px;
   height: 100px;
@@ -181,19 +204,6 @@ export default {
   margin-bottom: 20px;
 }
 
-.user-info .name {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.user-info .address,
-.user-info .gender,
-.user-info .age,
-.user-info .birthday {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
 /*头像容器样式*/
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -217,5 +227,48 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+/*用户信息查看界面样式*/
+.profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.profile-card {
+  width: 600px;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-header h2 {
+  margin: 10px 0;
+}
+
+.profile-content {
+  margin-top: 30px;
+}
+
+.profile-content h3 {
+  margin-bottom: 20px;
+}
+
+.profile-item {
+  margin-bottom: 10px;
+}
+
+.profile-label {
+  font-weight: bold;
+}
+
+.profile-value {
+  margin-left: 5px;
 }
 </style>

@@ -23,7 +23,9 @@
         <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">
           导航栏
         </el-button>
-        <div style="align-self: center;background-color: aqua">搜索栏</div>
+        <div style="align-self: center;background-color: aqua">
+          <Search></Search>
+        </div>
         <div style="align-self: flex-end;margin-bottom: 6px">
           <Avatar></Avatar>
         </div>
@@ -40,9 +42,10 @@
 
 <script>
 import Avatar from "@/components/Avatar";
+import Search from "@/components/Search";
 export default {
   name: "Layout",
-  components: {Avatar},
+  components: {Search, Avatar},
   data() {
     return {
       // showNav: false, // 导航栏默认隐藏

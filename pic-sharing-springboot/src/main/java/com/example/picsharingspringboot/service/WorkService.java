@@ -46,4 +46,8 @@ public interface WorkService {
     boolean addAuditInfo(AuditInfo auditInfo);
 
     AuditInfo getAuditInfoByWorkId(Integer workId);
+
+    List<Illustration> getUserCollection(User user);
+
+    List<Illustration> searchWorkByKeyword(String keyword);
 }

@@ -16,7 +16,9 @@
         <p>{{ illustration.description }}</p>
         <!-- 插画作者和上传日期 -->
         <div class="author-date">
-          <span>{{ illustration.userId }}</span>
+          <span>
+            <UserInfoMini :user="authorInfo"></UserInfoMini>
+          </span>
           <span>{{ new Date(illustration.createdAt) }}</span>
         </div>
 <!--        一些收藏数，浏览数，点赞数的数据显示-->
@@ -65,6 +67,10 @@ export default {
   components: {UserInfoMini, CommentList},
   data(){
     return{
+      authorInfo:{
+        id:Number,
+        username:'',
+      },
       workIndex:{},
       illustration:{},
       srcList:[],
@@ -88,12 +94,19 @@ export default {
   },
   created() {
     this.workIndex = JSON.parse(this.$route.query.itemJson.toString())
+    this.authorInfo.id = this.workIndex.userId
     this.load()
   },
   async mounted() {
     await this.sleep(100);
+    // 添加浏览监听器
     this.$el.addEventListener('click',this.incrementView())
+    // 检查当前用户是否收藏了作品
     this.checkCollectLikes()
+    // 检查当前作品的作者和用户是否是一个人
+    if (this.authorInfo.id === this.userInfo.id){
+      this.authorInfo = this.userInfo
+    }
   },
   methods: {
     // 取消收藏

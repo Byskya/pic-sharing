@@ -25,7 +25,7 @@
               <div class="content">
                 <div class="title">{{ item.title}}</div>
                 <div class="bottom clearfix">
-                  <time class="time">{{new Date(item.createdAt)}}</time>
+                  <time class="time">{{new Date(item.createdAt).toLocaleString()}}</time>
                   <el-button type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
                 </div>
               </div>
@@ -50,8 +50,10 @@
 
 <script>
 
+import UserInfoMini from "@/components/UserInfoMini";
 export default {
   name: 'HomeView',
+  components: {UserInfoMini},
   data(){
     return{
       cardList:[],

@@ -1,8 +1,8 @@
 <template>
   <div class="user-info">
-    <el-avatar v-if="user.avatar!=null" :src="'data:image/*;base64,'+user.avatar" :size="size"></el-avatar>
+    <el-avatar v-if="userInfo.avatar!=null" :src="'data:image/*;base64,'+userInfo.avatar" :size="size"></el-avatar>
     <el-avatar v-else :src="headerBg" :size="size"></el-avatar>
-    <span class="username">{{ user.username }}</span>
+    <span class="username">{{ userInfo.username }}</span>
   </div>
 </template>
 
@@ -13,7 +13,8 @@ export default {
   data(){
     return{
       // 头像背景
-      headerBg
+      headerBg,
+      userInfo:{}
     }
   },
   props: {
@@ -25,6 +26,25 @@ export default {
     size: {
       type: Number,
       default: 40
+    }
+  },
+  created() {
+    if (this.user.username===''){
+      this.load()
+    }
+    else {
+      this.userInfo = this.user
+    }
+  },
+  methods:{
+    load(){
+      this.axios.get('http://localhost:9090/user/info/'+this.user.id).then(response=>{
+        if (response.status===200){
+          this.userInfo = response.data.data
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
     }
   }
 }
