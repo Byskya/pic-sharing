@@ -2,6 +2,7 @@ package com.example.picsharingspringboot.controller;
 
 import com.example.picsharingspringboot.entity.*;
 import com.example.picsharingspringboot.service.WorkService;
+import com.example.picsharingspringboot.util.FileDeleteUtil;
 import com.example.picsharingspringboot.util.ImageUtils;
 import com.example.picsharingspringboot.util.ResponseResult;
 import com.example.picsharingspringboot.util.ThumbnailGenerator;
@@ -16,12 +17,148 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 @CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081"}, allowCredentials = "true")
 @RestController
 public class WorkController {
+    @Autowired
+    private WorkService workService;
+//        图片路径
+//    原图
+    private final static String basePath = "D:\\Tools\\MyDatabase\\illustrations\\";
+//    缩略图
+    private final static String thumbnailBasePath = "D:\\Tools\\MyDatabase\\illustrations\\Thumbnails\\";
+//    获取当前登录用户的所有关注者的作品
+    @GetMapping("/following/works")
+    public ResponseResult<List<Illustration>> getFollowingWorksByUserId(HttpSession session) throws IOException {
+        ResponseResult<List<Illustration>> rr = new ResponseResult<>();
+        User user = (User) session.getAttribute("user");
+        Follow follow = new Follow();
+        follow.setFollowerId(user.getId());
+        List<Illustration> list = workService.getFollowingWorksByUserId(follow);
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        if (!list.isEmpty()){
+            rr.setState(200);
+            rr.setMessage("获取关注用户的作品成功");
+            rr.setData(list);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("获取关注用户的作品失败");
+            rr.setData(null);
+        }
+        return rr;
+    }
+//    作品修改
+    @PostMapping("/work/edit")
+    @Transactional
+    public ResponseResult<Void> illustrationEdit(MultipartHttpServletRequest request) throws IOException {
+
+        ResponseResult<Void> rr = new ResponseResult<>();
+
+//        获取前端发送过来的插画信息
+        MultipartFile file = request.getFile("illustration");
+        ObjectMapper objectMapper = new ObjectMapper();
+        Illustration info = objectMapper.readValue(request.getParameter("workInfo"), Illustration.class);
+        Integer[] tagId = objectMapper.readValue(request.getParameter("tags"),Integer[].class);
+//        获取没修改前作品的信息
+        Illustration returnWork = workService.getReturnWorkById(info.getId());
+        String imageUrl = returnWork.getImageUrl();
+        String thumbnailUrl = returnWork.getThumbnailUrl();
+        boolean b = FileDeleteUtil.deleteFile(new File(imageUrl));
+        boolean b2 = FileDeleteUtil.deleteFile(new File(thumbnailUrl));
+        if (b && b2){
+            assert file != null;
+//            保存缩略图和原图到指定文件夹,并在数据库表单中存放图片的位置信息
+            String filePath = basePath+System.currentTimeMillis()+"-"+file.getOriginalFilename();
+            ImageUtils.saveImage(file.getBytes(),filePath);
+            String thumbnailPath = thumbnailBasePath+System.currentTimeMillis()+"-thumbnail-"+file.getOriginalFilename();
+            String format = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".")+1);
+            byte[] bytesThumbnail = ThumbnailGenerator.generateThumbnail(file.getBytes(), format);
+            ImageUtils.saveImage(bytesThumbnail,thumbnailPath);
+            Image image = new com.example.picsharingspringboot.entity.Image();
+//            更新图片表单的数据
+            image.setId(returnWork.getImageId());
+            image.setUrl(filePath);
+            image.setThumbnailPath(thumbnailPath);
+            boolean judge = workService.editImage(image);
+//            删除作品的旧标签映射
+            boolean b3 = workService.deleteWorkTags(returnWork.getId());
+            if (b3){
+                List<MapIllustrationTag> listMap = new ArrayList<>();
+                if (judge){
+                    int imageId = image.getId();
+                    info.setImageId(imageId);
+                    info.setImageUrl(filePath);
+                    boolean judge2 = workService.editIllustration(info);
+                    if (judge2){
+                        for (Integer integer : tagId) {
+                            listMap.add(new MapIllustrationTag(null, info.getId(), integer));
+                        }
+                        System.out.println(listMap);
+                        boolean judge3 = workService.addWorkTagMap(listMap);
+                        if (judge3){
+                            rr.setMessage("上传成功");
+                            rr.setState(200);
+                        }
+                        else {
+                            rr.setMessage("上传失败");
+                            rr.setData(null);
+                            rr.setState(500);
+                        }
+                    }
+                    else {
+                        rr.setMessage("上传失败");
+                        rr.setData(null);
+                        rr.setState(500);
+                    }
+                }
+                else {
+                    rr.setMessage("上传失败");
+                    rr.setData(null);
+                    rr.setState(500);
+                }
+            }
+            else {
+                rr.setMessage("上传失败");
+                rr.setData(null);
+                rr.setState(500);
+            }
+        }
+        else {
+            rr.setMessage("上传失败");
+            rr.setData(null);
+            rr.setState(500);
+        }
+        return rr;
+    }
+    @GetMapping("/work/return/{workId}")
+    public ResponseResult<Illustration> getReturnWorkById(@PathVariable("workId")Integer workId) throws IOException {
+        ResponseResult<Illustration> rr = new ResponseResult<>();
+        Illustration illustration = workService.getReturnWorkById(workId);
+        List<IllustrationTag> tags = workService.getWorkTagsById(workId);
+        if (illustration!=null){
+            byte[] bytes = ImageUtils.readImage(illustration.getImageUrl());
+            illustration.setImageResource(bytes);
+            illustration.setTags(tags);
+            rr.setState(200);
+            rr.setMessage("获取退回作品成功");
+            rr.setData(illustration);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("获取退回作品失败");
+            rr.setData(null);
+        }
+        return rr;
+    }
+    //根据关键词搜索作品
     @GetMapping("/search/work/{keyword}/{pageNum}/{pageSize}")
     public ResponseResult<PageInfo<Illustration>> searchWork(@PathVariable("keyword") String keyword,@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize") Integer pageSize) throws IOException {
         PageHelper.startPage(pageNum,pageSize);
@@ -150,9 +287,9 @@ public class WorkController {
         }
         return rr;
     }
+//    作品不通过
     @PostMapping("/review/notPass/{workId}/{userId}/{feedback}")
     public ResponseResult<AuditInfo> reviewNotPass(@PathVariable("workId")Integer workId,@PathVariable("userId") Integer userId,@PathVariable("feedback") String feedback){
-        System.out.println("==============test");
         ResponseResult<AuditInfo> rr = new ResponseResult<>();
         AuditInfo auditInfo = new AuditInfo();
         auditInfo.setUserId(userId);
@@ -198,8 +335,6 @@ public class WorkController {
         return rr;
     }
 //    判断作品是否收藏
-    @Autowired
-    private WorkService workService;
     @GetMapping("/check/isCollect/{workId}")
     public ResponseResult<Favorite> checkCollect(@PathVariable("workId") Integer workId,HttpSession session){
         ResponseResult<Favorite> rr = new ResponseResult<>();
@@ -241,7 +376,7 @@ public class WorkController {
         }
         return rr;
     }
-    //取消作品
+    //取消收藏
     @PostMapping("/delete/collect/{workId}")
     @Transactional
     public ResponseResult<Favorite> deleteCollect(@PathVariable("workId") Integer workId,HttpSession session){
@@ -382,7 +517,7 @@ public class WorkController {
     public void fileUpload(@RequestParam("file") MultipartFile file){
         System.out.println(file);
     }
-//    获取所有插画作品
+//    获取所有插画作品不包括未过审的
     @GetMapping("/work/all/{pageNum}/{pageSize}")
     public ResponseResult<PageInfo<Illustration>> getAllIllustration(@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize) throws IOException {
         PageHelper.startPage(pageNum,pageSize);
@@ -405,6 +540,30 @@ public class WorkController {
         }
         return rr;
     }
+    //获取所有作品包括未过审的
+    @GetMapping("/work/all/includeUnapproved/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<Illustration>> getAllIllustrationIncludeUnapproved(@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize) throws IOException {
+        PageHelper.startPage(pageNum,pageSize);
+        ResponseResult<PageInfo<Illustration>> rr = new ResponseResult<>();
+        List<Illustration> list = workService.getAllIllustrationIncludeUnapproved();
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        PageInfo<Illustration> pageInfo = new PageInfo<Illustration>(list);
+        if (!list.isEmpty()){
+            rr.setData(pageInfo);
+            rr.setState(200);
+            rr.setMessage("获取所有作品成功");
+        }
+        else{
+            rr.setData(null);
+            rr.setMessage("获取所有作品失败");
+            rr.setState(500);
+        }
+        return rr;
+    }
+
 //    获取某张图片资源
     @GetMapping("/get/image/{imageId}")
     public ResponseResult<byte[]> getFile(@PathVariable("imageId") Integer imageId) throws IOException {
@@ -442,7 +601,7 @@ public class WorkController {
         }
         return rr;
     }
-//    获取当前用户的所有作品
+//    获取当前登录用户的所有作品
     @GetMapping("user/allIllustration/{pageNum}/{pageSize}")
     @Transactional
     public ResponseResult<PageInfo<Illustration>> getUserAllIllustrations(@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize, HttpSession session) throws IOException {
@@ -455,14 +614,37 @@ public class WorkController {
             illustration.setImageResource(bytes);
         }
         PageInfo<Illustration> illustrationPageInfo = new PageInfo<Illustration>(list);
-        if (list!=null){
+        if (!list.isEmpty()){
             rr.setState(200);
-            rr.setMessage("加载成功");
+            rr.setMessage("加载登录用户的所有作品成功");
             rr.setData(illustrationPageInfo);
         }
         else {
             rr.setState(500);
-            rr.setMessage("加载失败");
+            rr.setMessage("加载登录用户的所有作品失败");
+            rr.setData(null);
+        }
+        return rr;
+    }
+//    根据用户id获取用户的所有作品,但不包括未过审的
+    @GetMapping("/user/work/{userId}/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<Illustration>> getUserWorkById(@PathVariable("userId") Integer userId,@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize) throws IOException {
+        PageHelper.startPage(pageNum,pageSize);
+        ResponseResult<PageInfo<Illustration>> rr = new ResponseResult<>();
+        List<Illustration> list = workService.getUserAllIllustrationExceptUnapproved(userId);
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        PageInfo<Illustration> pageInfo = new PageInfo<>(list);
+        if (!list.isEmpty()){
+            rr.setState(200);
+            rr.setMessage("用户作品加载成功");
+            rr.setData(pageInfo);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("用户作品加载失败");
             rr.setData(null);
         }
         return rr;
@@ -490,10 +672,6 @@ public class WorkController {
     @Transactional
     public ResponseResult<Illustration> illustrationUpload(MultipartHttpServletRequest request) throws IOException {
         ResponseResult<Illustration> rr = new ResponseResult<>();
-//        原图保存位置
-        String basePath = "D:\\Tools\\MyDatabase\\illustrations\\";
-//        缩略图保存路径
-        String thumbnailBasePath = "D:\\Tools\\MyDatabase\\illustrations\\Thumbnails\\";
 //        读取请求发送过来的数据
         MultipartFile file = request.getFile("illustration");
         ObjectMapper objectMapper = new ObjectMapper();

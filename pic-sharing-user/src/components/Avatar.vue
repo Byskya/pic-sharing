@@ -12,6 +12,9 @@
         <el-dropdown-item>
           <a @click="toMyWorks">我的作品</a>
         </el-dropdown-item>
+        <el-dropdown-item>
+          <a @click="toUserFollow">关注列表</a>
+        </el-dropdown-item>
         <el-dropdown-item><a @click="toCollection">收藏</a></el-dropdown-item>
         <el-dropdown-item>浏览记录</el-dropdown-item>
         <el-dropdown-item><a @click="loginOut">退出登录</a></el-dropdown-item>
@@ -50,6 +53,11 @@ export default {
     }
   },
   methods:{
+    toUserFollow(){
+      this.$router.push({
+        name:'userFollow'
+      })
+    },
     // 跳转到收藏夹
     toCollection(){
       this.$router.push({

@@ -1,5 +1,6 @@
 package com.example.picsharingspringboot.service;
 
+import com.example.picsharingspringboot.entity.Follow;
 import com.example.picsharingspringboot.entity.User;
 
 import java.util.List;
@@ -22,4 +23,12 @@ public interface UserService {
     User getUserInfo(User user);
 
     boolean editUserInfo(User user);
+
+    Follow checkFollow(Follow follow);
+
+    boolean followUser(Follow follow);
+
+    boolean deleteFollow(Follow follow);
+
+    List<User> getUserFollowList(Follow follow);
 }

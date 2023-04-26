@@ -1,4 +1,5 @@
 package com.example.picsharingspringboot.mapper;
+import com.example.picsharingspringboot.entity.Follow;
 import com.example.picsharingspringboot.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
@@ -20,4 +21,12 @@ public interface UserMapper {
     boolean editUserInfo(User user);
 
     User getUserInfoById(User user);
+
+    Follow checkFollow(Follow follow);
+
+    boolean followUser(Follow follow);
+
+    boolean deleteFollow(Follow follow);
+
+    List<User> getUserFollowList(Follow follow);
 }

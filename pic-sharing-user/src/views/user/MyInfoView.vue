@@ -1,8 +1,8 @@
 <template>
 <div>
 <!--  背景-->
-  <div class="bg">
-    <img src="@/assets/bg.png" height="200px" width="100%" alt="bg">
+  <div class="bg" style="background-color: white;overflow: hidden;height: 400px">
+    <img src="@/assets/bg.png" style="overflow: hidden" width="100%" alt="bg">
   </div>
 
 <!--  个人信息区别-->
@@ -28,13 +28,36 @@
         <h2>个人作品精选区</h2>
       </div></el-col>
     </el-row>
-    <el-row :gutter="20">
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-    </el-row>
-
+    <div class="card-list">
+      <el-empty v-if="total===0" description="空空如也">
+      </el-empty>
+      <div v-else>
+        <el-row  :gutter="20">
+          <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
+            <el-card class="card" :body-style="{ padding: '0px' }">
+              <img :src="'data:image/png;base64,' + item.imageResource" class="image">
+              <div class="content">
+                <div class="title">{{ item.title}}</div>
+                <div class="bottom clearfix">
+                  <time class="time">{{new Date(item.createdAt).toLocaleString()}}</time>
+                  <el-button type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+        <div style="display: flex; justify-content: center;margin-top: 20px">
+          <el-pagination
+              background
+              :current-page="params.pageNum"
+              :current-size="params.pageSize"
+              layout="prev, pager, next"
+              @current-change="handleCurrentChange"
+              :total="total">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
   </div>
   <div>
     <component v-if="show" :is="popup" @close="hidePopup" :user="user" :showContent="judge"></component>
@@ -56,7 +79,15 @@ export default {
       show: false,
       popup: null,
       // 决定弹窗显示内容
-      judge: true
+      judge: true,
+      cardList:[],
+      loading: true,
+      currentDate: Date,
+      total:0,
+      params:{
+        pageNum: 1,
+        pageSize: 10
+      }
     }
   },
   computed:{
@@ -68,6 +99,7 @@ export default {
   },
   created() {
     this.load()
+    this.loadUserWorks()
     this.$bus.$on('showModal', () => {
       this.popup = UserInfo
       this.show = true
@@ -80,6 +112,24 @@ export default {
     })
   },
   methods:{
+    loadUserWorks(){
+      this.axios.get('http://localhost:9090/user/work/'+this.userInfo.id+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+        if (response.data.state===200){
+          this.cardList = response.data.data.list
+          this.cardList = response.data.data.list
+          this.total = response.data.data.total
+          this.loading = false
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    // 分页导航栏
+    handleCurrentChange(pageNum){
+      this.params.pageNum = pageNum
+      console.log(this.params.pageNum)
+      this.loadUserWorks()
+    },
     displayWin(){
       this.judge = true
       this.$bus.$emit('showModal')
@@ -141,5 +191,55 @@ export default {
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
+}
+.time {
+  font-size: 13px;
+  color: #999;
+}
+.card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  transition: box-shadow 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card .image {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card .content {
+  padding: 20px;
+}
+
+.card .title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card .bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #999;
+  margin-top: 13px;
+  line-height: 12px;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
 }
 </style>

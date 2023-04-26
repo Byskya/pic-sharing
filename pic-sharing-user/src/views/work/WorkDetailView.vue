@@ -16,7 +16,10 @@
         <p>{{ illustration.description }}</p>
         <!-- 插画作者和上传日期 -->
         <div class="author-date">
-          <span>
+          <span v-if="isMine" @click="toMyInfo">
+            <UserInfoMini :user="userInfo"></UserInfoMini>
+          </span>
+          <span v-else @click="toAuthorInfo">
             <UserInfoMini :user="authorInfo"></UserInfoMini>
           </span>
           <span>{{ new Date(illustration.createdAt) }}</span>
@@ -103,12 +106,29 @@ export default {
     this.$el.addEventListener('click',this.incrementView())
     // 检查当前用户是否收藏了作品
     this.checkCollectLikes()
-    // 检查当前作品的作者和用户是否是一个人
-    if (this.authorInfo.id === this.userInfo.id){
-      this.authorInfo = this.userInfo
-    }
   },
   methods: {
+    toMyInfo(){
+      this.$router.push({
+        name:'myInfo'
+      })
+    },
+    // 跳转到作者个人信息页面
+    toAuthorInfo(){
+      const id = this.authorInfo.id
+      const username = ''
+      const userInfo = {
+        id,
+        username
+      }
+      const userJson = JSON.stringify(userInfo)
+      this.$router.push({
+        name:'userInfo',
+        query:{
+          userJson
+        }
+      })
+    },
     // 取消收藏
     deleteFavorite(){
       this.axios.post('http://localhost:9090/delete/collect/'+this.illustration.id).then(response=>{

@@ -1,5 +1,6 @@
 package com.example.picsharingspringboot.service.impl;
 
+import com.example.picsharingspringboot.entity.Follow;
 import com.example.picsharingspringboot.entity.User;
 import com.example.picsharingspringboot.mapper.UserMapper;
 import com.example.picsharingspringboot.service.UserService;
@@ -104,5 +105,25 @@ public class UserServiceImpl implements UserService {
     public boolean editUserInfo(User user) {
         boolean judge = userMapper.editUserInfo(user);
         return judge;
+    }
+
+    @Override
+    public Follow checkFollow(Follow follow) {
+        return userMapper.checkFollow(follow);
+    }
+
+    @Override
+    public boolean followUser(Follow follow) {
+        return userMapper.followUser(follow);
+    }
+
+    @Override
+    public boolean deleteFollow(Follow follow) {
+        return userMapper.deleteFollow(follow);
+    }
+
+    @Override
+    public List<User> getUserFollowList(Follow follow) {
+        return userMapper.getUserFollowList(follow);
     }
 }

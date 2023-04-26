@@ -46,8 +46,17 @@
         </set>
         where illustration_id = #{illustrationId}
     </update>
+    <update id="editImage" useGeneratedKeys="true" keyProperty="id">
+        update images set url = #{url} , thumbnail_path = #{thumbnailPath} where id = #{id}
+    </update>
+    <update id="editIllustration">
+        update illustrations i join audit_info a on i.id = a.illustration_id  set i.title = #{title}, i.description = #{description},i.user_id=#{userId},i.image_id = #{imageId},i.approved = 0 ,a.status = '待审核' where i.id = #{id}
+    </update>
     <delete id="deleteCollect">
         DELETE from favorites where user_id = #{userId} and illustration_id = #{illustrationId}
+    </delete>
+    <delete id="deleteWorkTags">
+        delete from illustration_tag_map where illustration_id = #{id}
     </delete>
     <select id="getAllTags" resultType="com.example.picsharingspringboot.entity.IllustrationTag">
         select * from illustration_tags
@@ -84,5 +93,19 @@
     </select>
     <select id="getIllustrationsByKeyword" resultType="com.example.picsharingspringboot.entity.Illustration">
         select i.*,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where i.title like concat('%',#{keyword},'%')
+    </select>
+    <select id="getReturnWorkById" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id join audit_info a on a.illustration_id = i.id where a.status = '不通过' and a.illustration_id = #{workId}
+    </select>
+    <select id="getUserAllIllustrationExceptUnapproved"
+            resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where user_id = #{userId} and i.approved = 1
+    </select>
+    <select id="getFollowingWorksByUserId" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.thumbnail_path as thumbnailUrl from user_follow uf join illustrations i on uf.following_id = i.user_id join images im on i.image_id = im.id where uf.follower_id = #{followerId} and i.approved = 1
+    </select>
+    <select id="getAllIllustrationIncludeUnapproved"
+            resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id
     </select>
 </mapper>

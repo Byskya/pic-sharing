@@ -1,9 +1,5 @@
 <template>
   <div class="main-container">
-<!--    旧版的侧边导航栏-->
-<!--    <div class="nav-container" :class="{'show-nav': showNav}">-->
-<!--      &lt;!&ndash; 导航栏内容 &ndash;&gt;-->
-<!--    </div>-->
     <el-drawer
         title="我是标题"
         :visible.sync="drawer"
@@ -19,9 +15,7 @@
     <div class="content-container">
       <!-- 内容区域 -->
       <div class="header">
-<!--        <div style="align-self: flex-start;margin-top: 18px"><button @click="toggleNav">导航栏按钮</button></div>-->
-        <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">
-          导航栏
+        <el-button @click="drawer = true" icon="el-icon-s-unfold"  type="primary">
         </el-button>
         <div style="align-self: center;background-color: aqua">
           <Search></Search>

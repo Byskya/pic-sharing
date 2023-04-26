@@ -1,11 +1,14 @@
 package com.example.picsharingspringboot.controller;
 
+import com.example.picsharingspringboot.entity.Favorite;
+import com.example.picsharingspringboot.entity.Follow;
 import com.example.picsharingspringboot.entity.User;
 import com.example.picsharingspringboot.service.UserService;
 import com.example.picsharingspringboot.util.ResponseResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +27,92 @@ import java.util.Locale;
 public class UserController {
     @Autowired
     private UserService userService;
+//    获取用户的关注列表
+    @GetMapping("/user/followList/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<User>> getUserFollowList(@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize")Integer pageSize,HttpSession session){
+        PageHelper.startPage(pageNum,pageSize);
+        ResponseResult<PageInfo<User>> rr= new ResponseResult<>();
+        User user = (User)session.getAttribute("user");
+        Follow follow = new Follow();
+        follow.setFollowerId(user.getId());
+        List<User> list = userService.getUserFollowList(follow);
+        if (!list.isEmpty()){
+            PageInfo<User> pageInfo = new PageInfo<>(list);
+            rr.setState(200);
+            rr.setMessage("获取用户关注列表成功");
+            rr.setData(pageInfo);
+        }
+        else {
+            rr.setData(null);
+            rr.setMessage("获取用户关注列表失败");
+            rr.setState(500);
+        }
+        return rr;
+    }
+//    取消关注
+    @PostMapping("/delete/follow/{followingId}")
+    @Transactional
+    public ResponseResult<Follow> deleteFollow(@PathVariable("followingId") Integer followingId,HttpSession session){
+        ResponseResult<Follow> rr = new ResponseResult<>();
+        Follow follow = new Follow();
+        follow.setFollowingId(followingId);
+        User user = (User)session.getAttribute("user");
+        follow.setFollowerId(user.getId());
+        boolean judge = userService.deleteFollow(follow);
+        if (judge){
+            rr.setMessage("取消关注成功");
+            rr.setState(200);
+            rr.setData(follow);
+        }
+        else {
+            rr.setData(follow);
+            rr.setState(500);
+            rr.setMessage("取消关注失败");
+        }
+        return rr;
+    }
+//    关注指定用户
+    @PostMapping("/follow/{followingId}")
+    public ResponseResult<Follow> followUser(@PathVariable("followingId") Integer followingId,HttpSession session){
+        ResponseResult<Follow> rr = new ResponseResult<>();
+        Follow follow = new Follow();
+        follow.setFollowingId(followingId);
+        User user = (User)session.getAttribute("user");
+        follow.setFollowerId(user.getId());
+        boolean judge = userService.followUser(follow);
+        if (judge){
+            rr.setMessage("关注成功");
+            rr.setState(200);
+            rr.setData(follow);
+        }
+        else {
+            rr.setData(follow);
+            rr.setState(500);
+            rr.setMessage("关注失败");
+        }
+        return rr;
+    }
+//    判断用户之间是否存在关注关系
+    @GetMapping("/check/isFollow/{followingId}")
+    public ResponseResult<Follow> checkFollow(@PathVariable("followingId") Integer followingId, HttpSession session){
+        ResponseResult<Follow> rr = new ResponseResult<>();
+        Follow follow = new Follow();
+        follow.setFollowingId(followingId);
+        User user = (User)session.getAttribute("user");
+        follow.setFollowerId(user.getId());
+        Follow realHas = userService.checkFollow(follow);
+        if (realHas!=null){
+            rr.setMessage("用户已关注");
+            rr.setState(200);
+            rr.setData(realHas);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("用户未关注");
+            rr.setData(null);
+        }
+        return rr;
+    }
 //    模糊查询
     @RequestMapping("/search/user/{username}/{pageNum}/{pageSize}")
     public ResponseResult<PageInfo<User>> getUserBycondition(@PathVariable("username") String username,@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize){

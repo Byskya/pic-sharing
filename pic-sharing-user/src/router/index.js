@@ -9,12 +9,14 @@ import MyWorksView from "@/views/work/MyWorksView";
 import MyInfoView from "@/views/user/MyInfoView";
 import UploadWorkView from "@/views/work/UploadWorkView";
 import WorkDetailView from "@/views/work/WorkDetailView";
-import WorkTypeView from "../../../pic-sharing-admin/src/views/type/WorkTypeView";
-import WorkRankView from "../../../pic-sharing-admin/src/views/rank/WorkRankView";
 import ReviewScheduleView from "@/views/work/ReviewScheduleView";
 import MyCollectionView from "@/views/user/MyCollectionView";
 import SearchResultView from "@/views/search/SearchResultView";
 import UserInfoView from "@/views/user/UserInfoView";
+import EditWorkView from "@/views/work/EditWorkView";
+import UserFollowView from "@/views/follow/UserFollowView";
+import WorkTypeView from "@/views/type/WorkTypeView";
+import WorkRankView from "@/views/rank/WorkRankView";
 
 Vue.use(VueRouter)
 
@@ -71,6 +73,11 @@ const routes = [
         component: UploadWorkView
       },
       {
+        path: 'editWork',
+        name: 'editWork',
+        component: EditWorkView
+      },
+      {
         path: 'workDetail',
         name: 'workDetail',
         component: WorkDetailView
@@ -94,6 +101,11 @@ const routes = [
         path: 'searchResult',
         name: 'searchResult',
         component: SearchResultView
+      },
+      {
+        path: 'userFollow',
+        name: 'userFollow',
+        component: UserFollowView
       }
     ]
   },

@@ -156,4 +156,39 @@ public class WorkServiceImpl implements WorkService {
     public List<Illustration> searchWorkByKeyword(String keyword) {
         return workMapper.getIllustrationsByKeyword(keyword);
     }
+
+    @Override
+    public Illustration getReturnWorkById(Integer workId) {
+        return workMapper.getReturnWorkById(workId);
+    }
+
+    @Override
+    public boolean editImage(Image image) {
+        return workMapper.editImage(image);
+    }
+
+    @Override
+    public boolean editIllustration(Illustration info) {
+        return workMapper.editIllustration(info);
+    }
+
+    @Override
+    public boolean deleteWorkTags(Integer id) {
+        return workMapper.deleteWorkTags(id);
+    }
+
+    @Override
+    public List<Illustration> getUserAllIllustrationExceptUnapproved(Integer userId) {
+        return workMapper.getUserAllIllustrationExceptUnapproved(userId);
+    }
+
+    @Override
+    public List<Illustration> getFollowingWorksByUserId(Follow follow) {
+        return workMapper.getFollowingWorksByUserId(follow);
+    }
+
+    @Override
+    public List<Illustration> getAllIllustrationIncludeUnapproved() {
+        return workMapper.getAllIllustrationIncludeUnapproved();
+    }
 }

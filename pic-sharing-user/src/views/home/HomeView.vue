@@ -2,21 +2,42 @@
   <div class="home">
     <!-- 内容区域内容 -->
     <div>
-      <h2>关注用户作品</h2>
       <el-row>
-        <el-col :span="24"><div class="grid-content bg-purple-dark"></div></el-col>
+        <el-col :span="24">
+          <div class="grid-content bg-purple-dark">
+            <h2>关注用户的作品</h2>
+          </div>
+        </el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      <el-row v-if="followWorkList" :gutter="20" style="display: flex;justify-content: center">
+        <el-carousel :interval="4000" type="card" height="250px" :autoplay="false"  style="width: 1000px">
+          <el-carousel-item v-for="item in followWorkList" :key="item.id">
+            <el-card class="card" :body-style="{ padding: '0px' }">
+              <img :src="'data:image/png;base64,' + item.imageResource" class="image" @click="toWorkDetail(item)">
+              <div class="content">
+                <div class="title">{{ item.title}}</div>
+                <div class="bottom clearfix">
+                  <time class="time">{{new Date(item.createdAt).toLocaleString()}}</time>
+<!--                  <el-button type="text" class="button" @click="toWorkDetail(item)">查看</el-button>-->
+                </div>
+              </div>
+            </el-card>
+          </el-carousel-item>
+        </el-carousel>
       </el-row>
+      <el-empty v-else description="空白" v-loading="loadingWork">
+      </el-empty>
     </div>
     <div class="card-list">
-      <h2>推荐作品</h2>
-        <el-empty v-if="total===0" description="加载中" v-loading="loading">
-        </el-empty>
+      <el-row>
+        <el-col :span="24">
+          <div class="grid-content bg-purple-dark">
+            <h2>推荐作品</h2>
+          </div>
+        </el-col>
+      </el-row>
+      <el-empty v-if="total===0" description="加载中" v-loading="loadingWork">
+      </el-empty>
       <div v-else>
         <el-row  :gutter="20">
           <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
@@ -44,7 +65,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -56,8 +76,11 @@ export default {
   components: {UserInfoMini},
   data(){
     return{
+      followWorkList:[],
+      // 关注作品的数量
+      followWorkTotal:Number,
       cardList:[],
-      loading: true,
+      loadingWork: true,
       currentDate: Date,
       total:0,
       params:{
@@ -68,8 +91,20 @@ export default {
   },
   created() {
     this.load()
+    this.loadFollowWorks()
   },
   methods:{
+    loadFollowWorks(){
+      this.axios.get('http://localhost:9090/following/works').then(response=>{
+        if (response.status===200){
+          console.log(response.data.data)
+          this.followWorkList = response.data.data
+          this.followWorkTotal = response.data.data.length
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
     toWorkDetail(item){
       const id = item.id
       const title = item.title
@@ -93,7 +128,7 @@ export default {
           this.cardList = response.data.data.list
           this.cardList = response.data.data.list
           this.total = response.data.data.total
-          this.loading = false
+          this.loadingWork = false
         }
       }).catch(error=>{
         console.log(error)
@@ -184,5 +219,20 @@ export default {
 
 .clearfix:after {
   clear: both
+}
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+  background-color: #d3dce6;
 }
 </style>

@@ -62,6 +62,7 @@ export default {
               console.log('登录失败')
             }
           }).catch(error=>{
+            this.$message.success("登录失败")
             console.error(error);
           });
         } else {

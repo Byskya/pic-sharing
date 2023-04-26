@@ -6,6 +6,9 @@
     <insert id="addUser">
         INSERT INTO t_user (username,password,email,salt) values (#{username},#{password},#{email},#{salt})
     </insert>
+    <insert id="followUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user_follow (follower_id,following_id ) values(#{followerId},#{followingId})
+    </insert>
     <update id="updateUserInfo">
         update t_user set username=#{username},gender=#{gender},phone_number=#{phoneNumber},birthday=#{birthday},address=#{address} where id=#{id}
     </update>
@@ -15,6 +18,9 @@
     <update id="editUserInfo">
         update t_user set username=#{username},avatar=#{avatar,jdbcType=BLOB}, gender=#{gender},birthday=#{birthday},address=#{address} where id=#{id}
     </update>
+    <delete id="deleteFollow">
+        DELETE from user_follow where follower_id = #{followerId} and following_id = #{followingId}
+    </delete>
     <select id="getAllUser" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user
     </select>
@@ -26,5 +32,11 @@
     </select>
     <select id="getUserInfoById" resultType="com.example.picsharingspringboot.entity.User">
         select * from t_user where id = #{id}
+    </select>
+    <select id="checkFollow" resultType="com.example.picsharingspringboot.entity.Follow">
+        select * from user_follow where follower_id = #{followerId} and following_id = #{followingId}
+    </select>
+    <select id="getUserFollowList" resultType="com.example.picsharingspringboot.entity.User">
+        select u.* from user_follow uf join t_user u on uf.following_id = u.id where uf.follower_id = #{followerId}
     </select>
 </mapper>

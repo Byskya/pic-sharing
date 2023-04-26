@@ -50,4 +50,18 @@ public interface WorkService {
     List<Illustration> getUserCollection(User user);
 
     List<Illustration> searchWorkByKeyword(String keyword);
+
+    Illustration getReturnWorkById(Integer workId);
+
+    boolean editImage(Image image);
+
+    boolean editIllustration(Illustration info);
+
+    boolean deleteWorkTags(Integer id);
+
+    List<Illustration> getUserAllIllustrationExceptUnapproved(Integer userId);
+
+    List<Illustration> getFollowingWorksByUserId(Follow follow);
+
+    List<Illustration> getAllIllustrationIncludeUnapproved();
 }

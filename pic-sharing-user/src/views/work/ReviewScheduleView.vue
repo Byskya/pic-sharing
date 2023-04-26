@@ -19,7 +19,7 @@
       </el-timeline>
     </div>
     <div>
-      <el-button v-if="judge">
+      <el-button type="danger" v-if="judge" @click="uploadAgain">
         再次申请
       </el-button>
     </div>
@@ -44,6 +44,15 @@ export default {
     this.load()
   },
   methods:{
+    uploadAgain(){
+      const workId = this.workInfo.id
+      this.$router.push({
+        name:'editWork',
+        query:{
+          workId
+        }
+      })
+    },
     load(){
       this.axios.get('http://localhost:9090/work/timeline/'+this.workInfo.id).then(response=>{
         if (response.status===200){

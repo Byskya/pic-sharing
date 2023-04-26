@@ -1,12 +1,12 @@
 <template>
   <div>
-
+    作品排行
   </div>
 </template>
 
 <script>
 export default {
-  name: "UserCollectionsView"
+  name: "WorkRankView"
 }
 </script>
 

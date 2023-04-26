@@ -1,8 +1,8 @@
 <template>
   <div>
     <!--  背景-->
-    <div class="bg">
-      <img src="@/assets/bg.png" height="200px" width="100%" alt="bg">
+    <<div class="bg" style="background-color: white;overflow: hidden;height: 400px">
+      <img src="@/assets/bg.png" style="overflow: hidden" width="100%" alt="bg">
     </div>
 
     <!--  个人信息区别-->
@@ -11,26 +11,55 @@
       <div style="align-self: flex-start">
         <div style="display: flex;justify-content: space-between;">
           <div>
-            <UserInfoMini v-if="userInfo" :user="userInfo" :size="80"></UserInfoMini>
+            <UserInfoMini v-if="userInfo.username!==''" :user="userInfo" :size="80"></UserInfoMini>
             <el-button @click="displayWin">查看个人信息</el-button>
           </div>
         </div>
+      </div>
+      <div style="align-self: flex-end">
+        <el-button v-if="isFollow" type="danger" @click="deleteFollow">已关注</el-button>
+        <el-button v-else type="danger" @click="follow">关注</el-button>
       </div>
     </div>
     <!--  作品区-->
     <div>
       <el-row>
-        <el-col :span="24"><div class="grid-content bg-purple-dark">
-          <h2>个人作品精选区</h2>
-        </div></el-col>
+        <el-col :span="24">
+          <div class="grid-content bg-purple-dark">
+            <h2>个人作品区</h2>
+          </div>
+        </el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-      </el-row>
-
+      <div class="card-list">
+        <el-empty v-if="total===0" description="空空如也">
+        </el-empty>
+        <div v-else>
+          <el-row  :gutter="20">
+            <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
+              <el-card class="card" :body-style="{ padding: '0px' }">
+                <img :src="'data:image/png;base64,' + item.imageResource" class="image">
+                <div class="content">
+                  <div class="title">{{ item.title}}</div>
+                  <div class="bottom clearfix">
+                    <time class="time">{{new Date(item.createdAt).toLocaleString()}}</time>
+                    <el-button type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+          <div style="display: flex; justify-content: center;margin-top: 20px">
+            <el-pagination
+                background
+                :current-page="params.pageNum"
+                :current-size="params.pageSize"
+                layout="prev, pager, next"
+                @current-change="handleCurrentChange"
+                :total="total">
+            </el-pagination>
+          </div>
+        </div>
+      </div>
     </div>
     <div>
       <component v-if="show" :is="popup" @close="hidePopup" :user="user" :showContent="judge"></component>
@@ -48,11 +77,20 @@ export default {
   components: {UserInfoMini, Avatar},
   data(){
     return{
+      isFollow:false,
       user:{},
       show: false,
       popup: null,
       // 决定弹窗显示内容
-      judge: true
+      judge: true,
+      cardList:[],
+      loading: true,
+      currentDate: Date,
+      total:0,
+      params:{
+        pageNum: 1,
+        pageSize: 10
+      }
     }
   },
   computed:{
@@ -65,6 +103,7 @@ export default {
   created() {
     this.user = JSON.parse(this.$route.query.userJson.toString())
     this.load()
+    this.loadUserWorks()
     this.$bus.$on('showModal', () => {
       this.popup = UserInfo
       this.show = true
@@ -76,7 +115,48 @@ export default {
       this.judge = false
     })
   },
+  async mounted() {
+    await this.sleep(100);
+    // 检查当前用户是否关注了作者
+    this.checkFollow()
+  },
   methods:{
+    //睡眠方法，解决异步处理顺序的问题
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
+    // 检测是否收藏和点赞
+    checkFollow(){
+      this.axios.get('http://localhost:9090/check/isFollow/'+this.userInfo.id).then(response=>{
+        if (response.data.state===200){
+          this.isFollow = true
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    follow(){
+      // 关注逻辑
+      this.axios.post('http://localhost:9090/follow/'+this.userInfo.id).then(response=>{
+        if (response.data.state===200){
+          this.$message.success("关注成功")
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+
+    },
+    // 取消关注
+    deleteFollow(){
+      this.axios.post('http://localhost:9090/delete/follow/'+this.userInfo.id).then(response=>{
+        if (response.data.state===200){
+          this.$message.success("已取消关注")
+          this.isFollow = false
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
     displayWin(){
       this.judge = true
       this.$bus.$emit('showModal')
@@ -84,6 +164,42 @@ export default {
     displayWin2(){
       this.judge = false
       this.$bus.$emit('showModal')
+    },
+    // 跳转到作品详情页
+    toWorkDetail(item){
+      const id = item.id
+      const title = item.title
+      const userId = item.userId
+      const workInfo = {
+        id,
+        title,
+        userId,
+      }
+      const itemJson = JSON.stringify(workInfo)
+      this.$router.push({
+        name:'workDetail',
+        query:{
+          itemJson
+        }
+      })
+    },
+    loadUserWorks(){
+      this.axios.get('http://localhost:9090/user/work/'+this.userInfo.id+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+        if (response.data.state===200){
+          this.cardList = response.data.data.list
+          this.cardList = response.data.data.list
+          this.total = response.data.data.total
+          this.loading = false
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    // 分页导航栏
+    handleCurrentChange(pageNum){
+      this.params.pageNum = pageNum
+      console.log(this.params.pageNum)
+      this.loadUserWorks()
     },
     load(){
       this.axios.get('http://localhost:9090/user/info/'+this.userInfo.id).then(response=>{
@@ -136,5 +252,55 @@ export default {
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
+}
+.time {
+  font-size: 13px;
+  color: #999;
+}
+.card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  transition: box-shadow 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card .image {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card .content {
+  padding: 20px;
+}
+
+.card .title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card .bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #999;
+  margin-top: 13px;
+  line-height: 12px;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
 }
 </style>

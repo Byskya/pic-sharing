@@ -9,7 +9,6 @@
               <el-form-item label="作品名称：">
                 <span>{{ props.row.title }}</span>
               </el-form-item>
-
               <el-form-item label="作品ID：">
                 <span>{{ props.row.id }}</span>
               </el-form-item>
