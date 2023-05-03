@@ -68,4 +68,8 @@ public interface WorkMapper {
     List<Illustration> getFollowingWorksByUserId(Follow follow);
 
     List<Illustration> getAllIllustrationIncludeUnapproved();
+
+    boolean takeoffWork(Illustration illustration);
+
+    List<Illustration> getIllustrationByTag(IllustrationTag illustrationTag);
 }

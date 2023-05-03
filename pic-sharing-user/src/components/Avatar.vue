@@ -17,6 +17,12 @@
         </el-dropdown-item>
         <el-dropdown-item><a @click="toCollection">收藏</a></el-dropdown-item>
         <el-dropdown-item>浏览记录</el-dropdown-item>
+        <el-dropdown-item>
+          <el-badge :hidden="this.messageNumber===0" :value="this.messageNumber" class="item">
+            <a @click="toMessageView">用户消息</a>
+          </el-badge>
+        </el-dropdown-item>
+
         <el-dropdown-item><a @click="loginOut">退出登录</a></el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -33,11 +39,13 @@ export default {
       // 判断是否为用户自己的信息
       isMine:'yes',
       user:{},
+      messageNumber:0,
     }
   },
   created() {
     if (localStorage.getItem("isLoggedIn")){
       this.load()
+      this.loadMessageNumber()
     }
   },
   computed:{
@@ -53,6 +61,11 @@ export default {
     }
   },
   methods:{
+    toMessageView(){
+      this.$router.push({
+        name:'messageView'
+      })
+    },
     toUserFollow(){
       this.$router.push({
         name:'userFollow'
@@ -67,12 +80,14 @@ export default {
     toLogin(){
       localStorage.setItem('isLoggedIn','false')
       this.$message.success("跳转登录")
-      this.$router.push('index')
+      this.$router.push({
+        name:'index'
+      })
     },
     loginOut(){
       localStorage.setItem('isLoggedIn','false')
       this.$message.success("退出登录成功")
-      this.$router.push('index')
+      this.$router.push('/index')
     },
     toMyWorks(){
       this.$router.push({
@@ -97,6 +112,15 @@ export default {
         }
         else {
           this.$message.success(response.data.data.message)
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+    loadMessageNumber(){
+      this.axios.get('http://localhost:9090/message/number').then(response=>{
+        if (response.status===200){
+          this.messageNumber = response.data.data
         }
       }).catch(error=>{
         console.log(error)

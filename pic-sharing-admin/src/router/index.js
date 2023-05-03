@@ -3,12 +3,13 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/home/HomeView.vue'
 import UserManageView from "@/views/user/UserManageView";
 import PictureMangeView from "@/views/picture/PictureMangeView";
-import MessageView from "@/views/message/MessageView";
+import MessageView from "@/views/message/MessageSendView";
 import UserUpdate from "@/views/user/UserUpdate";
 import Login from "@/views/Login";
 import Layout from "@/views/Layout";
 import ReviewWorkView from "@/views/work/ReviewWorkView";
 import RemoveWorkView from "@/views/work/RemoveWorkView";
+import MessageEditView from "@/views/message/MessageEditView";
 
 Vue.use(VueRouter)
 
@@ -48,6 +49,11 @@ const routes = [
         path: 'message',
         name: 'message',
         component: MessageView
+      },
+      {
+        path: 'messageEdit',
+        name: 'messageEdit',
+        component: MessageEditView
       },
       {
         path: 'userUpdate',

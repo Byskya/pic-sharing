@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--  背景-->
-    <<div class="bg" style="background-color: white;overflow: hidden;height: 400px">
+    <div class="bg" style="background-color: white;overflow: hidden;height: 400px">
       <img src="@/assets/bg.png" style="overflow: hidden" width="100%" alt="bg">
     </div>
 
@@ -17,6 +17,7 @@
         </div>
       </div>
       <div style="align-self: flex-end">
+        <el-button icon="el-icon-message" type="info" @click="toUserMessage">私信</el-button>
         <el-button v-if="isFollow" type="danger" @click="deleteFollow">已关注</el-button>
         <el-button v-else type="danger" @click="follow">关注</el-button>
       </div>
@@ -121,11 +122,23 @@ export default {
     this.checkFollow()
   },
   methods:{
+    // 跳转到用户聊天界面
+    toUserMessage(){
+      const sender = this.$store.state.user.id
+      const receiver = this.userInfo.id
+      this.$router.push({
+        name:'userChat',
+        query:{
+          sender,
+          receiver
+        }
+      })
+    },
     //睡眠方法，解决异步处理顺序的问题
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
-    // 检测是否收藏和点赞
+    // 检测是否关注
     checkFollow(){
       this.axios.get('http://localhost:9090/check/isFollow/'+this.userInfo.id).then(response=>{
         if (response.data.state===200){

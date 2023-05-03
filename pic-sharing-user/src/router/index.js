@@ -17,6 +17,10 @@ import EditWorkView from "@/views/work/EditWorkView";
 import UserFollowView from "@/views/follow/UserFollowView";
 import WorkTypeView from "@/views/type/WorkTypeView";
 import WorkRankView from "@/views/rank/WorkRankView";
+import MessageView from "@/views/message/MessageReceiveView";
+import NotificationView from "@/views/message/NotificationView";
+import UserMessageView from "@/views/message/UserMessageView";
+import UserChatView from "@/views/message/UserChatView";
 
 Vue.use(VueRouter)
 
@@ -106,6 +110,30 @@ const routes = [
         path: 'userFollow',
         name: 'userFollow',
         component: UserFollowView
+      },
+      {
+        path: 'userChat',
+        name: 'userChat',
+        component: UserChatView
+      },
+      {
+        path: 'messageView',
+        name: 'messageView',
+        redirect: 'messageView/notification',
+        component: MessageView,
+        children:[
+          {
+            path:'notification',
+            name:'notification',
+            component:NotificationView
+          },
+          {
+            path: 'userMessage',
+            name:'userMessage',
+            component: UserMessageView
+          }
+
+        ]
       }
     ]
   },

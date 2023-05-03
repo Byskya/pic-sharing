@@ -26,6 +26,23 @@ import java.util.*;
 public class WorkController {
     @Autowired
     private WorkService workService;
+    @PutMapping("/work/updateApproved/{workId}/{approved}")
+    public ResponseResult<Void> takeoffWork(@PathVariable("workId") Integer workId,@PathVariable("approved")boolean approved){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        Illustration illustration = new Illustration();
+        illustration.setId(workId);
+        illustration.setApproved(approved);
+        boolean judge = workService.takeoffWork(illustration);
+        if (judge){
+            rr.setMessage("下架成功");
+            rr.setState(200);
+        }
+        else {
+            rr.setMessage("下架失败");
+            rr.setState(500);
+        }
+        return rr;
+    }
 //        图片路径
 //    原图
     private final static String basePath = "D:\\Tools\\MyDatabase\\illustrations\\";
@@ -422,11 +439,12 @@ public class WorkController {
     //    点赞数
     @PostMapping("/up/likes/{workId}")
     public ResponseResult<Illustration> upWorkLikes(@PathVariable("workId") Integer workId){
+        System.out.println("test");
         ResponseResult<Illustration> rr = new ResponseResult<>();
         Illustration illustration = new Illustration();
         illustration.setId(workId);
         illustration = workService.getIllustrationById(illustration);
-        illustration.setViews(illustration.getLikes()+1);
+        illustration.setLikes(illustration.getLikes()+1);
         boolean judge = workService.upWorkLikes(illustration);
         if (judge){
             rr.setData(illustration);
@@ -739,6 +757,30 @@ public class WorkController {
             rr.setMessage("上传失败");
             rr.setData(null);
             rr.setState(500);
+        }
+        return rr;
+    }
+    @GetMapping("/illustration/bytag/{tagId}/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<Illustration>> getIllustrationByTag(@PathVariable("tagId")Integer tagId,@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize")Integer pageSize) throws IOException {
+        PageHelper.startPage(pageNum,pageSize);
+        ResponseResult<PageInfo<Illustration>> rr= new ResponseResult<>();
+        IllustrationTag illustrationTag = new IllustrationTag();
+        illustrationTag.setId(tagId);
+        List<Illustration> list = workService.getIllustrationByTag(illustrationTag);
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        PageInfo<Illustration> pageInfo = new PageInfo<>(list);
+        if (!list.isEmpty()){
+            rr.setState(200);
+            rr.setData(pageInfo);
+            rr.setMessage("根据标签获取作品成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setData(null);
+            rr.setMessage("根据标签获取作品失败");
         }
         return rr;
     }

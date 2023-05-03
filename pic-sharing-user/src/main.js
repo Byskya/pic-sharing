@@ -7,6 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import base64 from "@/plugins/base64";
+import randomUID from "@/plugins/randomUID";
 
 //设置axios发送的请求携带cookie
 axios.defaults.withCredentials = true;
@@ -15,6 +16,8 @@ Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios)
 Vue.use(base64)
+Vue.use(randomUID)
+
 const vm = new Vue({
   router,
   store,

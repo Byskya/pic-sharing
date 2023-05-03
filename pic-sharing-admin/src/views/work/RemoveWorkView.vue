@@ -10,7 +10,6 @@
                 <el-form-item label="作品名称：">
                   <span>{{ props.row.title }}</span>
                 </el-form-item>
-
                 <el-form-item label="作品ID：">
                   <span>{{ props.row.id }}</span>
                 </el-form-item>
@@ -124,7 +123,13 @@ export default {
       })
     },
     handleDelete(index, row) {
-
+      this.axios.put('http://localhost:9090/work/updateApproved/'+row.id+'/'+row.approved).then(response=>{
+        if (response.status===200){
+          console.log("检测到变动")
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
     }
   }
 }

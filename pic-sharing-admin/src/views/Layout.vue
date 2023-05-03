@@ -10,7 +10,7 @@
     <div style="display: flex">
       <!--      导航区-->
       <div style="width: 300px; min-height: 100vh; overflow: hidden; margin-right: 2px; background-color: white">
-        <el-menu :default-active="$route.path" router class="el-menu-demo">
+        <el-menu :default-active="$route.path" router class="el-menu-demo" @select="handleSelect">
           <el-menu-item index="/userManage">
             <i class="el-icon-user-solid"></i>
             <span>用户管理</span>
@@ -23,10 +23,16 @@
             <el-menu-item index="/reviewWork">审核</el-menu-item>
             <el-menu-item index="/removeWork">下架</el-menu-item>
           </el-submenu>
-          <el-menu-item index="/message">
-            <i class="el-icon-message-solid"></i>
-            <span>消息中心</span>
-          </el-menu-item>
+          <el-submenu index="/message">
+            <template slot="title">
+              <i class="el-icon-message-solid"></i>
+              <span>消息中心</span>
+            </template>
+            <el-menu-item index="/message">
+              消息发布
+            </el-menu-item>
+            <el-menu-item index="/messageEdit">消息编辑</el-menu-item>
+          </el-submenu>
           <el-menu-item @click="loginOut">
             <i class="el-icon-switch-button"></i>
             <span>退出登录</span>
@@ -50,6 +56,9 @@ export default {
     }
   },
   methods:{
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
+    },
     loginOut(){
       localStorage.setItem('isLoggedIn','false')
       this.$message.success("退出登录成功")

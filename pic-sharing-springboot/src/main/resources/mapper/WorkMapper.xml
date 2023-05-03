@@ -52,6 +52,9 @@
     <update id="editIllustration">
         update illustrations i join audit_info a on i.id = a.illustration_id  set i.title = #{title}, i.description = #{description},i.user_id=#{userId},i.image_id = #{imageId},i.approved = 0 ,a.status = '待审核' where i.id = #{id}
     </update>
+    <update id="takeoffWork">
+        update illustrations set approved = #{approved} where id = #{id}
+    </update>
     <delete id="deleteCollect">
         DELETE from favorites where user_id = #{userId} and illustration_id = #{illustrationId}
     </delete>
@@ -107,5 +110,8 @@
     <select id="getAllIllustrationIncludeUnapproved"
             resultType="com.example.picsharingspringboot.entity.Illustration">
         select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id
+    </select>
+    <select id="getIllustrationByTag" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustration_tags t join illustration_tag_map m on t.id = m.tag_id join illustrations i on i.id = m.illustration_id join images im on i.image_id = im.id where t.id = #{id}
     </select>
 </mapper>

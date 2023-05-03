@@ -50,7 +50,7 @@
       <el-table-column
           fixed="right"
           label="操作"
-          width="100">
+          width="200">
         <template slot-scope="scope">
           <el-button @click="handleClickUpdate(scope.row)" type="text" size="small">编辑</el-button>
           <el-button @click="handleClickBan(scope.row)" type="text" size="small">冻结/解冻</el-button>
@@ -105,7 +105,6 @@ export default {
           if(response.status === 200){
             this.tableData=response.data.data.list
             this.total = response.data.data.total
-            console.log(this.total)
           }
         }).catch(error=>{
           console.log(error)
@@ -189,7 +188,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .el-table .ban {
   background: #d99494;
 }

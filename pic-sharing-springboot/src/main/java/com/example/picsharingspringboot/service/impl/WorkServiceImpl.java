@@ -191,4 +191,14 @@ public class WorkServiceImpl implements WorkService {
     public List<Illustration> getAllIllustrationIncludeUnapproved() {
         return workMapper.getAllIllustrationIncludeUnapproved();
     }
+
+    @Override
+    public boolean takeoffWork(Illustration illustration) {
+        return workMapper.takeoffWork(illustration);
+    }
+
+    @Override
+    public List<Illustration> getIllustrationByTag(IllustrationTag illustrationTag) {
+        return workMapper.getIllustrationByTag(illustrationTag);
+    }
 }

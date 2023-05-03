@@ -1,5 +1,6 @@
 export default {
     install(Vue) {
+        // 把base64转化成blob类型
         Vue.prototype.$base64ToBlob = function (base64) {
             const arr = base64.split(',')
             const mime = arr[0].match(/:(.*?);/)[1]
