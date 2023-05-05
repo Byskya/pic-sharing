@@ -110,7 +110,7 @@ export default {
       this.load()
     },
     load(){
-      this.axios.get('http://localhost:9090/work/collection/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/work/collection/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
           this.tableData = response.data.data.list
           this.params.total = response.data.data.total
@@ -144,7 +144,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.post('http://localhost:9090/collection/delete/'+row.id).then(response=>{
+        this.$http.post('/collection/delete/'+row.id).then(response=>{
           if (response.status===200){
             this.$message({
               type: 'success',

@@ -41,7 +41,7 @@ export default {
   },
   methods:{
     loadMessageNumber(){
-      this.axios.get('http://localhost:9090/message/number').then(response=>{
+      this.$http.get('/message/number').then(response=>{
         if (response.status===200){
           this.messageNumber = response.data.data
         }

@@ -68,4 +68,32 @@ public interface WorkService {
     boolean takeoffWork(Illustration illustration);
 
     List<Illustration> getIllustrationByTag(IllustrationTag illustrationTag);
+
+    List<Illustration> getRankWorks();
+
+    boolean addWorkTag(IllustrationTag illustrationTag);
+
+    boolean editWorkTag(IllustrationTag illustrationTag);
+
+    boolean deleteWorkTagById(IllustrationTag illustrationTag);
+
+    Illustration getWorkInfoById(Integer workId);
+
+    boolean deleteWorkById(Illustration illustration);
+
+    boolean recordWatchHistory(UserHistory userHistory);
+
+    UserHistory findUserHistory(UserHistory userHistory);
+
+    boolean updateUserHistory(UserHistory userHistory);
+
+    List<UserHistory> getUserWatchHistory(Integer id);
+
+    Illustration getIllustrationThumbnailById(Illustration illustration);
+
+    boolean deleteUserWatchWorkHistory(UserHistory history);
+
+    boolean deleteUserAllHistory(Integer userId);
+
+    boolean deleteImageTableDataById(Integer workId);
 }

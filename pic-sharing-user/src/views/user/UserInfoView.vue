@@ -140,7 +140,7 @@ export default {
     },
     // 检测是否关注
     checkFollow(){
-      this.axios.get('http://localhost:9090/check/isFollow/'+this.userInfo.id).then(response=>{
+      this.$http.get('/check/isFollow/'+this.userInfo.id).then(response=>{
         if (response.data.state===200){
           this.isFollow = true
         }
@@ -150,7 +150,7 @@ export default {
     },
     follow(){
       // 关注逻辑
-      this.axios.post('http://localhost:9090/follow/'+this.userInfo.id).then(response=>{
+      this.$http.post('/follow/'+this.userInfo.id).then(response=>{
         if (response.data.state===200){
           this.$message.success("关注成功")
         }
@@ -161,7 +161,7 @@ export default {
     },
     // 取消关注
     deleteFollow(){
-      this.axios.post('http://localhost:9090/delete/follow/'+this.userInfo.id).then(response=>{
+      this.$http.post('/delete/follow/'+this.userInfo.id).then(response=>{
         if (response.data.state===200){
           this.$message.success("已取消关注")
           this.isFollow = false
@@ -197,7 +197,7 @@ export default {
       })
     },
     loadUserWorks(){
-      this.axios.get('http://localhost:9090/user/work/'+this.userInfo.id+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/user/work/'+this.userInfo.id+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
           this.cardList = response.data.data.list
           this.cardList = response.data.data.list
@@ -215,7 +215,7 @@ export default {
       this.loadUserWorks()
     },
     load(){
-      this.axios.get('http://localhost:9090/user/info/'+this.userInfo.id).then(response=>{
+      this.$http.get('/user/info/'+this.userInfo.id).then(response=>{
         if (response.status===200){
           this.user = response.data.data
         }

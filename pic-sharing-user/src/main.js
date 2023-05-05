@@ -9,12 +9,16 @@ import VueAxios from 'vue-axios'
 import base64 from "@/plugins/base64";
 import randomUID from "@/plugins/randomUID";
 
-//设置axios发送的请求携带cookie
-axios.defaults.withCredentials = true;
+
+const axiosInstance = axios.create({
+  baseURL: 'http://192.168.31.46:9090', //设置请求前缀
+  timeout: 10000, //设置请求超时时间,
+  withCredentials: true //设置axios发送的请求携带cookie
+})
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
-Vue.use(VueAxios, axios)
+Vue.use(VueAxios, axiosInstance)
 Vue.use(base64)
 Vue.use(randomUID)
 

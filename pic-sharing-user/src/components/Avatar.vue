@@ -16,7 +16,7 @@
           <a @click="toUserFollow">关注列表</a>
         </el-dropdown-item>
         <el-dropdown-item><a @click="toCollection">收藏</a></el-dropdown-item>
-        <el-dropdown-item>浏览记录</el-dropdown-item>
+        <el-dropdown-item><a @click="toUserHistory">浏览记录</a></el-dropdown-item>
         <el-dropdown-item>
           <el-badge :hidden="this.messageNumber===0" :value="this.messageNumber" class="item">
             <a @click="toMessageView">用户消息</a>
@@ -61,6 +61,11 @@ export default {
     }
   },
   methods:{
+    toUserHistory(){
+      this.$router.push({
+        name:'userHistory'
+      })
+    },
     toMessageView(){
       this.$router.push({
         name:'messageView'
@@ -104,7 +109,7 @@ export default {
       })
     },
     load(){
-      this.axios.get('http://localhost:9090/user/get/info').then(response=>{
+      this.$http.get('/user/get/info').then(response=>{
         if (response.status===200){
           console.log("加载成功")
           this.user = response.data.data
@@ -118,7 +123,7 @@ export default {
       })
     },
     loadMessageNumber(){
-      this.axios.get('http://localhost:9090/message/number').then(response=>{
+      this.$http.get('/message/number').then(response=>{
         if (response.status===200){
           this.messageNumber = response.data.data
         }

@@ -201,4 +201,77 @@ public class WorkServiceImpl implements WorkService {
     public List<Illustration> getIllustrationByTag(IllustrationTag illustrationTag) {
         return workMapper.getIllustrationByTag(illustrationTag);
     }
+
+    @Override
+    public List<Illustration> getRankWorks() {
+        List<Illustration> allIllustration = workMapper.getAllIllustration();
+        allIllustration.sort((i1,i2)->(i2.getViews()-i1.getViews()));
+        List<Illustration> top10 = allIllustration.subList(0, Math.min(10, allIllustration.size()));
+        return top10;
+    }
+
+    @Override
+    public boolean addWorkTag(IllustrationTag illustrationTag) {
+        return workMapper.addWorkTag(illustrationTag);
+    }
+
+    @Override
+    public boolean editWorkTag(IllustrationTag illustrationTag) {
+        return workMapper.editWorkTag(illustrationTag);
+    }
+
+    @Override
+    public boolean deleteWorkTagById(IllustrationTag illustrationTag) {
+        return workMapper.deleteWorkTagById(illustrationTag);
+    }
+
+    @Override
+    public Illustration getWorkInfoById(Integer workId) {
+        return workMapper.getEditWorkInfoById(workId);
+    }
+
+    @Override
+    public boolean deleteWorkById(Illustration illustration) {
+        return workMapper.deleteWorkById(illustration);
+    }
+
+    @Override
+    public boolean recordWatchHistory(UserHistory userHistory) {
+        return workMapper.recordUserHistory(userHistory);
+    }
+
+    @Override
+    public UserHistory findUserHistory(UserHistory userHistory) {
+        return workMapper.findUserHistory(userHistory);
+    }
+
+    @Override
+    public boolean updateUserHistory(UserHistory userHistory) {
+        return workMapper.updateUserHistory(userHistory);
+    }
+
+    @Override
+    public List<UserHistory> getUserWatchHistory(Integer userId) {
+        return workMapper.getUserWatchHistory(userId);
+    }
+
+    @Override
+    public Illustration getIllustrationThumbnailById(Illustration illustration) {
+        return workMapper.getIllustrationThumbnailById(illustration);
+    }
+
+    @Override
+    public boolean deleteUserWatchWorkHistory(UserHistory history) {
+        return workMapper.deleteUserHistoryById(history);
+    }
+
+    @Override
+    public boolean deleteUserAllHistory(Integer userId) {
+        return workMapper.deleteUserAllHistoryByUserId(userId);
+    }
+
+    @Override
+    public boolean deleteImageTableDataById(Integer workId) {
+        return workMapper.deleteImageTableDataById(workId);
+    }
 }

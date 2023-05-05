@@ -4,6 +4,7 @@
       <el-upload
           action="http://localhost:9090/file/upload"
           list-type="picture-card"
+          :file-list="list"
           :on-success="handleAvatarSuccess"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove">
@@ -42,10 +43,13 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-  name: "UploadWorkView",
+  name: "EditApprovedWorkView",
   data() {
     return {
+      // el-upload的图片暂存列表
+      list:[],
       // 作品标签
       tags: [
       ],
@@ -54,6 +58,7 @@ export default {
       dialogVisible: false,
       //表单数据体
       ruleForm: {
+        workId:Number,
         illustration: null,
         name: '',
         scope: [],
@@ -66,7 +71,7 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入作品标题', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 1, max: 10, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
         region: [
           { required: true, message: '请选择公开范围', trigger: 'change' }
@@ -79,43 +84,58 @@ export default {
   },
   computed:{
     workInfo:{
-     get(){
-       const userId = this.$store.state.user.id
-       const title = this.ruleForm.name
-       const scope = this.ruleForm.scope
-       const commentSwitch = this.ruleForm.commentSwitch
-       const description = this.ruleForm.desc
-      return {
-         userId,
-         title,
-        description
+      get(){
+        const userId = this.$store.state.user.id
+        const title = this.ruleForm.name
+        const scope = this.ruleForm.scope
+        const id = this.ruleForm.workId
+        const commentSwitch = this.ruleForm.commentSwitch
+        const description = this.ruleForm.desc
+        return {
+          id,
+          userId,
+          title,
+          description
+        }
       }
-     }
     }
   },
   created() {
     this.load()
   },
   methods: {
+    // 加载需要编辑修改的作品的信息
     load(){
-      this.$http.get("/work/tags").then(response=>{
-        if (response.data.state===200){
-          console.log(response.data.data)
-          this.tags = response.data.data
+      const workId = this.$route.query.workId
+      const request1 = this.$http.get('/work/tags')
+      const request2 = this.$http.get('/work/info/'+workId)
+      axios.all([request1,request2]).then(axios.spread((response1,response2)=>{
+        if (response1.status===200 && response2.status === 200){
+          console.log(response1.data.data)
+          console.log(response2.data.data)
+          this.ruleForm.workId = response2.data.data.id
+          this.tags = response1.data.data
+          this.ruleForm.name = response2.data.data.title
+          for (let i = 0;i<response2.data.data.tags.length;i++){
+            this.ruleForm.selectedTags.push(response2.data.data.tags[i].id)
+          }
+          this.ruleForm.desc = response2.data.data.description
+          const base64Str = 'data:image/*;base64,'+response2.data.data.imageResource
+          const blob = this.$base64ToBlob(base64Str)
+          // 获取文件名
+          const arr = response2.data.data.imageUrl.split('\\')
+          const fileName = arr[arr.length - 1]
+          this.list.push({name:fileName,url:URL.createObjectURL(blob)})
+          this.ruleForm.illustration = new File([blob], fileName, {type: blob.type, lastModified: Date.now()})
         }
-        else {
-          console.log(response.data.message)
-        }
-      }).catch(error=>{
+      })).catch(error=>{
         console.log(error)
-      });
+      })
     },
     // 图片上传方法处理
-    // 头像上传相关方法
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
       this.ruleForm.illustration = file.raw
-      console.log(this.ruleForm.avatar)
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
@@ -135,17 +155,17 @@ export default {
           formData.append('illustration',this.ruleForm.illustration)
           formData.append('workInfo',jsonWorkInfo)
           formData.append('tags',jsonTags)
-          this.$http.post('/work/upload',formData,{
+          this.$http.post('/approvedWork/edit',formData,{
             headers:{
               'Content-Type':'multipart/form-data'
             }
           }).then(response=>{
             if (response.status===200){
-              this.$message.success('投稿成功')
+              this.$message.success("作品信息修改成功")
             }
             console.log(response)
           }).catch(error=>{
-            this.$message.error("投稿失败")
+            this.$message.success("作品信息修改失败")
             console.log(error)
           });
           alert('submit!');

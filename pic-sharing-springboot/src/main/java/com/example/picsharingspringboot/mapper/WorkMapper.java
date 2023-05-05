@@ -72,4 +72,30 @@ public interface WorkMapper {
     boolean takeoffWork(Illustration illustration);
 
     List<Illustration> getIllustrationByTag(IllustrationTag illustrationTag);
+
+    boolean addWorkTag(IllustrationTag illustrationTag);
+
+    boolean editWorkTag(IllustrationTag illustrationTag);
+
+    boolean deleteWorkTagById(IllustrationTag illustrationTag);
+
+    Illustration getEditWorkInfoById(Integer workId);
+
+    boolean deleteWorkById(Illustration illustration);
+
+    boolean recordUserHistory(UserHistory userHistory);
+
+    UserHistory findUserHistory(UserHistory userHistory);
+
+    boolean updateUserHistory(UserHistory userHistory);
+
+    List<UserHistory> getUserWatchHistory(Integer userId);
+
+    Illustration getIllustrationThumbnailById(Illustration illustration);
+
+    boolean deleteUserHistoryById(UserHistory history);
+
+    boolean deleteUserAllHistoryByUserId(Integer userId);
+
+    boolean deleteImageTableDataById(Integer workId);
 }

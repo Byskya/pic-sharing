@@ -10,6 +10,7 @@ import Layout from "@/views/Layout";
 import ReviewWorkView from "@/views/work/ReviewWorkView";
 import RemoveWorkView from "@/views/work/RemoveWorkView";
 import MessageEditView from "@/views/message/MessageEditView";
+import AddWorkTagView from "@/views/work/AddWorkTagView";
 
 Vue.use(VueRouter)
 
@@ -69,6 +70,11 @@ const routes = [
         path: 'removeWork',
         name:'removeWork',
         component: RemoveWorkView
+      },
+      {
+        path: 'addWorkTag',
+        name: 'addWorkTag',
+        component: AddWorkTagView
       }
     ]
   }

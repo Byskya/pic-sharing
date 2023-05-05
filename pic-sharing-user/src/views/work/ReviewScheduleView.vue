@@ -54,7 +54,7 @@ export default {
       })
     },
     load(){
-      this.axios.get('http://localhost:9090/work/timeline/'+this.workInfo.id).then(response=>{
+      this.$http.get('/work/timeline/'+this.workInfo.id).then(response=>{
         if (response.status===200){
           console.log("获取成功")
           console.log(response.data.data.illustration)

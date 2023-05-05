@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     load(){
-      this.axios.get('http://localhost:9090/work/tags').then(response=>{
+      this.$http.get('/work/tags').then(response=>{
         if (response.status===200){
           this.tags = response.data.data
         }

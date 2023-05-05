@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "EditWorkView",
   data() {
@@ -106,9 +107,9 @@ export default {
     // 加载需要编辑修改的作品的信息
     load(){
       const workId = this.$route.query.workId
-      const request1 = this.axios.get('http://localhost:9090/work/tags')
-      const request2 = this.axios.get('http://localhost:9090/work/return/'+workId)
-      this.axios.all([request1,request2]).then(this.axios.spread((response1,response2)=>{
+      const request1 = this.$http.get('/work/tags')
+      const request2 = this.$http.get('/work/return/'+workId)
+      axios.all([request1,request2]).then(axios.spread((response1,response2)=>{
         if (response1.status===200 && response2.status === 200){
           console.log(response1.data.data)
           console.log(response2.data.data)
@@ -150,17 +151,17 @@ export default {
           formData.append('illustration',this.ruleForm.illustration)
           formData.append('workInfo',jsonWorkInfo)
           formData.append('tags',jsonTags)
-          this.axios.post('http://localhost:9090/work/edit',formData,{
+          this.$http.post('/work/edit',formData,{
             headers:{
               'Content-Type':'multipart/form-data'
             }
           }).then(response=>{
             if (response.status===200){
-              this.$message.success("用户信息修改成功")
+              this.$message.success("作品信息修改成功")
             }
             console.log(response)
           }).catch(error=>{
-            this.$message.success("用户信息修改失败")
+            this.$message.success("作品信息修改失败")
             console.log(error)
           });
           alert('submit!');

@@ -45,9 +45,23 @@ export default {
     };
   },
   created() {
+    this.openWebsocket()
     this.load()
   },
   methods: {
+    openWebsocket(){
+      // 创建WebSocket连接
+      this.socket = new WebSocket('ws://192.168.31.46:9090/UserChat');
+      this.socket.onopen = () => {
+        console.log('WebSocket连接已打开');
+      };
+      this.socket.onmessage = (event) => {
+        console.log('收到消息:', event.data);
+      };
+      this.socket.onclose = () => {
+        console.log('WebSocket连接已关闭');
+      };
+    },
     //根据isDelete属性更换表格行的颜色
     setAvatar(senderId){
       return senderId===this.currentUser.id ? 'data:image/*;base64,'+this.currentUser.avatar : 'data:image/*;base64,'+this.otherUser.avatar;
@@ -56,7 +70,7 @@ export default {
       const senderId = this.$route.query.sender
       const receiver = this.$route.query.receiver
       // 加载用户信息和聊天记录
-      this.axios.get('http://localhost:9090/user/chat/'+senderId+'/'+receiver).then(response=>{
+      this.$http.get('/user/chat/'+senderId+'/'+receiver).then(response=>{
         if (response.status===200){
           this.currentUser = response.data.data.sender
           this.otherUser = response.data.data.receiver
@@ -70,7 +84,14 @@ export default {
       if (!this.newMessage) {
         return;
       }
-      this.axios.post('http://localhost:9090/send/message/'+this.currentUser.id+'/'+this.otherUser.id+'/'+this.newMessage).then(response=>{
+
+      // 发送消息
+      this.socket.send(this.newMessage);
+      this.$message.success("通知发布成功")
+      // 清空消息
+      this.newMessage = '';
+
+      this.$http.post('/send/message/'+this.currentUser.id+'/'+this.otherUser.id+'/'+this.newMessage).then(response=>{
         if (response.status === 200){
           console.log("发送信息成功")
           this.messages.push({

@@ -32,7 +32,7 @@
       <el-row>
         <el-col :span="24">
           <div class="grid-content bg-purple-dark">
-            <h2>推荐作品</h2>
+            <h2>最新作品</h2>
           </div>
         </el-col>
       </el-row>
@@ -95,7 +95,7 @@ export default {
   },
   methods:{
     loadFollowWorks(){
-      this.axios.get('http://localhost:9090/following/works').then(response=>{
+      this.$http.get('/following/works').then(response=>{
         if (response.status===200){
           console.log(response.data.data)
           this.followWorkList = response.data.data
@@ -123,7 +123,7 @@ export default {
       })
     },
     load(){
-      this.axios.get('http://localhost:9090/work/all/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/work/all/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
           this.cardList = response.data.data.list
           this.cardList = response.data.data.list

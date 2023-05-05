@@ -69,7 +69,7 @@ export default {
         if (valid) {
           const jsonUserData = JSON.stringify(this.registerForm)
           // 处理登录逻辑，比如向后端API发送登录请求等
-          this.axios.post('http://localhost:9090/user/register',jsonUserData,{
+          this.$http.post('/user/register',jsonUserData,{
             headers:{
               'Content-Type':'application/json'
             }

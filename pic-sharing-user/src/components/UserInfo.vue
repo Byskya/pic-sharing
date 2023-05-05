@@ -139,7 +139,7 @@ export default {
           formData.append('birthday',this.ruleForm.birthday)
           formData.append('address',this.ruleForm.address)
           formData.append('id',this.ruleForm.id)
-          this.axios.put('http://localhost:9090/user/infoEdit',formData,{
+          this.$http.put('/user/infoEdit',formData,{
             headers:{
               'Content-Type':'multipart/form-data'
             }

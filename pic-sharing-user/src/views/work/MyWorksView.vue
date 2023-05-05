@@ -14,7 +14,17 @@
               </div>
               <div class="bottom clearfix">
                 <time class="time">{{new Date(item.createdAt)}}</time>
-                <el-button v-if="item.approved" type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
+
+                <el-dropdown v-if="item.approved">
+                  <span class="el-dropdown-link">
+                    <el-button type="text" class="button">操作</el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item><a @click="toWorkDetail(item)">查看</a></el-dropdown-item>
+                    <el-dropdown-item><a @click="uploadAgain(item)">修改</a></el-dropdown-item>
+                    <el-dropdown-item><a @click="deleteWork(item)">删除</a></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
                 <el-button v-else type="text" class="button" @click="toReviewSchedule(item)">查看审核进度</el-button>
               </div>
             </div>
@@ -64,6 +74,38 @@ export default {
     this.load()
   },
   methods:{
+    deleteWork(item){
+      this.$confirm('此操作将永久删除该作品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.delete('/delete/work/'+item.id).then(response=>{
+          if (response.status===200){
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }
+        }).catch(error=>{
+          console.log(error)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    uploadAgain(item){
+      const workId = item.id
+      this.$router.push({
+        name:'editApprovedWork',
+        query:{
+          workId
+        }
+      })
+    },
     toReviewSchedule(item){
       const id = item.id
       const title = item.title
@@ -99,7 +141,7 @@ export default {
       })
     },
     load(){
-      this.axios.get('http://localhost:9090/user/allIllustration/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/user/allIllustration/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
           this.cardList = response.data.data.list
           this.total = response.data.data.total
@@ -173,5 +215,12 @@ export default {
 
 .clearfix:after {
   clear: both
+}
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
 }
 </style>

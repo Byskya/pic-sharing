@@ -21,11 +21,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.46:8081","http://192.168.31.46:8080"}, allowCredentials = "true")
 @RestController
 public class WorkController {
     @Autowired
     private WorkService workService;
+    //        图片路径
+    //    原图
+    private final static String basePath = "D:\\Tools\\MyDatabase\\illustrations\\";
+    //    缩略图
+    private final static String thumbnailBasePath = "D:\\Tools\\MyDatabase\\illustrations\\Thumbnails\\";
+//    下架某一个作品
     @PutMapping("/work/updateApproved/{workId}/{approved}")
     public ResponseResult<Void> takeoffWork(@PathVariable("workId") Integer workId,@PathVariable("approved")boolean approved){
         ResponseResult<Void> rr = new ResponseResult<>();
@@ -43,32 +49,29 @@ public class WorkController {
         }
         return rr;
     }
-//        图片路径
-//    原图
-    private final static String basePath = "D:\\Tools\\MyDatabase\\illustrations\\";
-//    缩略图
-    private final static String thumbnailBasePath = "D:\\Tools\\MyDatabase\\illustrations\\Thumbnails\\";
 //    获取当前登录用户的所有关注者的作品
     @GetMapping("/following/works")
     public ResponseResult<List<Illustration>> getFollowingWorksByUserId(HttpSession session) throws IOException {
         ResponseResult<List<Illustration>> rr = new ResponseResult<>();
         User user = (User) session.getAttribute("user");
-        Follow follow = new Follow();
-        follow.setFollowerId(user.getId());
-        List<Illustration> list = workService.getFollowingWorksByUserId(follow);
-        for (Illustration illustration : list) {
-            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
-            illustration.setImageResource(bytes);
-        }
-        if (!list.isEmpty()){
-            rr.setState(200);
-            rr.setMessage("获取关注用户的作品成功");
-            rr.setData(list);
-        }
-        else {
-            rr.setState(500);
-            rr.setMessage("获取关注用户的作品失败");
-            rr.setData(null);
+        if(user!=null){
+            Follow follow = new Follow();
+            follow.setFollowerId(user.getId());
+            List<Illustration> list = workService.getFollowingWorksByUserId(follow);
+            for (Illustration illustration : list) {
+                byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+                illustration.setImageResource(bytes);
+            }
+            if (!list.isEmpty()){
+                rr.setState(200);
+                rr.setMessage("获取关注用户的作品成功");
+                rr.setData(list);
+            }
+            else {
+                rr.setState(500);
+                rr.setMessage("获取关注用户的作品失败");
+                rr.setData(null);
+            }
         }
         return rr;
     }
@@ -76,9 +79,7 @@ public class WorkController {
     @PostMapping("/work/edit")
     @Transactional
     public ResponseResult<Void> illustrationEdit(MultipartHttpServletRequest request) throws IOException {
-
         ResponseResult<Void> rr = new ResponseResult<>();
-
 //        获取前端发送过来的插画信息
         MultipartFile file = request.getFile("illustration");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -155,6 +156,7 @@ public class WorkController {
         }
         return rr;
     }
+    //获取被退回的作品
     @GetMapping("/work/return/{workId}")
     public ResponseResult<Illustration> getReturnWorkById(@PathVariable("workId")Integer workId) throws IOException {
         ResponseResult<Illustration> rr = new ResponseResult<>();
@@ -172,6 +174,113 @@ public class WorkController {
             rr.setState(500);
             rr.setMessage("获取退回作品失败");
             rr.setData(null);
+        }
+        return rr;
+    }
+//    获取修改作品的信息
+    @GetMapping("/work/info/{workId}")
+    public ResponseResult<Illustration> getWorkInfoById(@PathVariable("workId")Integer workId) throws IOException {
+        ResponseResult<Illustration> rr = new ResponseResult<>();
+        Illustration illustration = workService.getWorkInfoById(workId);
+        List<IllustrationTag> tags = workService.getWorkTagsById(workId);
+        if (illustration!=null){
+            byte[] bytes = ImageUtils.readImage(illustration.getImageUrl());
+            illustration.setImageResource(bytes);
+            illustration.setTags(tags);
+            rr.setState(200);
+            rr.setMessage("获取要修改作品信息成功");
+            rr.setData(illustration);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("获取要修改的作品信息失败");
+            rr.setData(null);
+        }
+        return rr;
+    }
+//    提交修改作品后的信息
+    @PostMapping("/approvedWork/edit")
+    @Transactional
+    public ResponseResult<Void> approvedIllustrationEdit(MultipartHttpServletRequest request) throws IOException {
+        System.out.println("测试===========================");
+        System.out.println("测试===========================");
+        System.out.println("测试===========================");
+        ResponseResult<Void> rr = new ResponseResult<>();
+    //        获取前端发送过来的插画信息
+        ObjectMapper objectMapper = new ObjectMapper();
+        MultipartFile file = request.getFile("illustration");
+        Illustration info = objectMapper.readValue(request.getParameter("workInfo"), Illustration.class);
+        Integer[] tagId = objectMapper.readValue(request.getParameter("tags"),Integer[].class);
+        System.out.println(Arrays.toString(tagId) +"===========================");
+    //        获取没修改前作品的信息
+        Illustration returnWork = workService.getWorkInfoById(info.getId());
+        String imageUrl = returnWork.getImageUrl();
+        String thumbnailUrl = returnWork.getThumbnailUrl();
+        boolean b = FileDeleteUtil.deleteFile(new File(imageUrl));
+        boolean b2 = FileDeleteUtil.deleteFile(new File(thumbnailUrl));
+        if (b && b2){
+            assert file != null;
+    //            保存缩略图和原图到指定文件夹,并在数据库表单中存放图片的位置信息
+            String filePath = basePath+System.currentTimeMillis()+"-"+file.getOriginalFilename();
+            ImageUtils.saveImage(file.getBytes(),filePath);
+            String thumbnailPath = thumbnailBasePath+System.currentTimeMillis()+"-thumbnail-"+file.getOriginalFilename();
+            String format = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".")+1);
+            byte[] bytesThumbnail = ThumbnailGenerator.generateThumbnail(file.getBytes(), format);
+            ImageUtils.saveImage(bytesThumbnail,thumbnailPath);
+            Image image = new com.example.picsharingspringboot.entity.Image();
+    //            更新图片表单的数据
+            image.setId(returnWork.getImageId());
+            image.setUrl(filePath);
+            image.setThumbnailPath(thumbnailPath);
+            boolean judge = workService.editImage(image);
+    //            删除作品的旧标签映射
+            boolean b3 = workService.deleteWorkTags(returnWork.getId());
+            if (b3){
+                List<MapIllustrationTag> listMap = new ArrayList<>();
+                if (judge){
+                    int imageId = image.getId();
+                    info.setImageId(imageId);
+                    info.setImageUrl(filePath);
+                    System.out.println(info+"=================================");
+                    boolean judge2 = workService.editIllustration(info);
+                    if (judge2){
+                        for (Integer integer : tagId) {
+                            listMap.add(new MapIllustrationTag(null, info.getId(), integer));
+                        }
+                        System.out.println(listMap);
+                        boolean judge3 = workService.addWorkTagMap(listMap);
+                        if (judge3){
+                            rr.setMessage("作品内容修改成功");
+                            rr.setState(200);
+                        }
+                        else {
+                            rr.setMessage("作品内容修改失败");
+                            rr.setData(null);
+                            rr.setState(500);
+                        }
+                    }
+                    else {
+                        rr.setMessage("作品内容修改失败");
+                        rr.setData(null);
+                        rr.setState(500);
+                    }
+                }
+                else {
+                    rr.setMessage("作品内容修改失败");
+                    rr.setData(null);
+                    rr.setState(500);
+                }
+            }
+            else {
+                rr.setMessage("作品内容修改失败");
+                rr.setData(null);
+                rr.setState(500);
+            }
+        }
+        else {
+            rr.setMessage("作品内容修改失败");
+            rr.setData(null);
+            rr.setState(500);
         }
         return rr;
     }
@@ -217,7 +326,7 @@ public class WorkController {
         }
         return rr;
     }
-//    获取当前用户的搜藏作品
+//    获取当前用户的收藏作品
     @GetMapping("/work/collection/{pageNum}/{pageSize}")
     public ResponseResult<PageInfo<Illustration>> getUserCollection(@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize") Integer pageSize,HttpSession session) throws IOException {
         PageHelper.startPage(pageNum,pageSize);
@@ -458,7 +567,7 @@ public class WorkController {
         }
         return rr;
     }
-//    根据作品id获取作品的信息
+//    根据作品id获取作品的信息（图片原图）
     @GetMapping("/work/{workId}")
     public ResponseResult<Illustration> getIllustrationById(@PathVariable("workId") Integer workId) throws IOException {
         ResponseResult<Illustration> rr = new ResponseResult<>();
@@ -476,6 +585,27 @@ public class WorkController {
         else {
             rr.setState(500);
             rr.setMessage("作品加载失败");
+            rr.setData(null);
+        }
+        return rr;
+    }
+//    获取作品信息缩略图
+    @GetMapping("/work/thumbnail/{workId}")
+    public ResponseResult<Illustration> getIllustrationThumbnailById(@PathVariable("workId") Integer workId) throws IOException {
+        ResponseResult<Illustration> rr = new ResponseResult<>();
+        Illustration illustration = new Illustration();
+        illustration.setId(workId);
+        illustration = workService.getIllustrationThumbnailById(illustration);
+        if (illustration!=null){
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+            rr.setData(illustration);
+            rr.setMessage("作品索引信息加载成功");
+            rr.setState(200);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("作品索引信息加载失败");
             rr.setData(null);
         }
         return rr;
@@ -541,9 +671,18 @@ public class WorkController {
         PageHelper.startPage(pageNum,pageSize);
         ResponseResult<PageInfo<Illustration>> rr = new ResponseResult<>();
         List<Illustration> list = workService.getAllIllustration();
+
         for (Illustration illustration : list) {
-            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
-            illustration.setImageResource(bytes);
+            byte[] bytes = new byte[0];
+            try {
+                bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            } catch (IOException e) {
+                bytes = null;
+                e.printStackTrace();
+            }
+            finally {
+                illustration.setImageResource(bytes);
+            }
         }
         PageInfo<Illustration> illustrationPageInfo = new PageInfo<Illustration>(list);
         if (!list.isEmpty()){
@@ -586,7 +725,6 @@ public class WorkController {
     @GetMapping("/get/image/{imageId}")
     public ResponseResult<byte[]> getFile(@PathVariable("imageId") Integer imageId) throws IOException {
         ResponseResult<byte[]> rr = new ResponseResult<>();
-        System.out.println(imageId+"=====================");
         Image image = workService.getImageById(imageId);
         if (image != null){
             System.out.println(image.getUrl());
@@ -628,8 +766,15 @@ public class WorkController {
         ResponseResult<PageInfo<Illustration>> rr = new ResponseResult<>();
         List<Illustration> list = workService.getUserAllIllustration(user.getId());
         for (Illustration illustration : list) {
-            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
-            illustration.setImageResource(bytes);
+            byte[] bytes = new byte[0];
+            try {
+                bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            } catch (IOException e) {
+                bytes=null;
+                e.printStackTrace();
+            } finally {
+                illustration.setImageResource(bytes);
+            }
         }
         PageInfo<Illustration> illustrationPageInfo = new PageInfo<Illustration>(list);
         if (!list.isEmpty()){
@@ -760,6 +905,7 @@ public class WorkController {
         }
         return rr;
     }
+    //根据标签获取作品
     @GetMapping("/illustration/bytag/{tagId}/{pageNum}/{pageSize}")
     public ResponseResult<PageInfo<Illustration>> getIllustrationByTag(@PathVariable("tagId")Integer tagId,@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize")Integer pageSize) throws IOException {
         PageHelper.startPage(pageNum,pageSize);
@@ -781,6 +927,195 @@ public class WorkController {
             rr.setState(500);
             rr.setData(null);
             rr.setMessage("根据标签获取作品失败");
+        }
+        return rr;
+    }
+    //获取tio10的作品
+    @GetMapping("/rank/works")
+    public ResponseResult<List<Illustration>> getRankWorks() throws IOException {
+        ResponseResult<List<Illustration>> rr = new ResponseResult<>();
+        List<Illustration> list = workService.getRankWorks();
+        for (Illustration illustration : list) {
+            byte[] bytes = ImageUtils.readImage(illustration.getThumbnailUrl());
+            illustration.setImageResource(bytes);
+        }
+        if (!list.isEmpty()){
+            rr.setMessage("获取前10名作品成功");
+            rr.setState(200);
+            rr.setData(list);
+        }
+        else {
+            rr.setMessage("获取前10名作品失败");
+            rr.setState(500);
+            rr.setData(null);
+        }
+        return rr;
+    }
+//    =============标签的增删改查====================
+    @PostMapping("/add/workTag/{tagName}")
+    public ResponseResult<Void> addWorkTag(@PathVariable("tagName")String tagName){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        IllustrationTag illustrationTag = new IllustrationTag();
+        illustrationTag.setTagName(tagName);
+        boolean judge = workService.addWorkTag(illustrationTag);
+        if (judge){
+            rr.setState(200);
+            rr.setMessage("标签添加成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("标签添加失败");
+        }
+        return rr;
+    }
+    @PutMapping("/edit/tag/{tagId}/{tagName}")
+    public ResponseResult<Void> editWorkTag(@PathVariable("tagId")Integer tagId,@PathVariable("tagName")String tagName){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        IllustrationTag illustrationTag = new IllustrationTag();
+        illustrationTag.setId(tagId);
+        illustrationTag.setTagName(tagName);
+        boolean judge = workService.editWorkTag(illustrationTag);
+        if (judge){
+            rr.setState(200);
+            rr.setMessage("标签修改成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("标签修改失败");
+        }
+        return rr;
+    }
+//    删除指定标签
+    @DeleteMapping("/delete/tag/{tagId}")
+    public ResponseResult<Void> deleteWorkTag(@PathVariable("tagId")Integer tagId){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        IllustrationTag illustrationTag = new IllustrationTag();
+        illustrationTag.setId(tagId);
+        boolean judge = workService.deleteWorkTagById(illustrationTag);
+        if (judge){
+            rr.setState(200);
+            rr.setMessage("标签删除成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("标签删除失败");
+        }
+        return rr;
+    }
+//    删除用户的指定作品
+    @DeleteMapping("/delete/work/{workId}")
+    @Transactional
+    public ResponseResult<Void> deleteUserIllustration(@PathVariable("workId")Integer workId,HttpSession session){
+        ResponseResult<Void> rr= new ResponseResult<>();
+        Illustration illustration = new Illustration();
+        User user = (User) session.getAttribute("user");
+        illustration.setId(workId);
+        illustration.setUserId(user.getId());
+        //        获取没修改前作品的信息
+        //        删除本地硬盘的图片
+        Illustration workInfo = workService.getWorkInfoById(illustration.getId());
+        String imageUrl = workInfo.getImageUrl();
+        String thumbnailUrl = workInfo.getThumbnailUrl();
+        boolean b = FileDeleteUtil.deleteFile(new File(imageUrl));
+        boolean b2 = FileDeleteUtil.deleteFile(new File(thumbnailUrl));
+        if (b && b2){
+            boolean judge = workService.deleteWorkById(illustration);
+            if (judge){
+                boolean judge2 = workService.deleteImageTableDataById(workId);
+                if (judge2){
+                    rr.setMessage("删除作品成功");
+                    rr.setState(200);
+                    return rr;
+                }
+            }
+        }
+        rr.setState(500);
+        rr.setMessage("删除作品失败");
+        return rr;
+    }
+//    记录当前用户的浏览记录
+    @PostMapping("/user/watch/history/{workId}")
+    public ResponseResult<Void> recordWatchHistory(@PathVariable("workId")Integer workId,HttpSession session){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        UserHistory userHistory = new UserHistory();
+        User user = (User) session.getAttribute("user");
+        userHistory.setIllustrationId(workId);
+        userHistory.setUserId(user.getId());
+        UserHistory history = workService.findUserHistory(userHistory);
+        if (history!=null){
+            boolean judge3 = workService.updateUserHistory(history);
+            if (judge3){
+                rr.setMessage("浏览记录更新成功");
+                rr.setState(200);
+            }
+            else {
+                rr.setState(500);
+                rr.setMessage("浏览记录更新失败");
+            }
+        }
+        else {
+            boolean judge2 = workService.recordWatchHistory(userHistory);
+            if (judge2){
+                rr.setMessage("浏览记录添加成功");
+                rr.setState(200);
+            }
+            else {
+                rr.setMessage("浏览记录添加失败");
+                rr.setState(500);
+            }
+        }
+        return rr;
+    }
+//    获取当前用户的浏览记录
+    @GetMapping("/get/user/watchHistory")
+    public ResponseResult<List<UserHistory>> getUserWatchHistory(HttpSession session){
+        ResponseResult<List<UserHistory>> rr = new ResponseResult<>();
+        User user = (User) session.getAttribute("user");
+        List<UserHistory> list= workService.getUserWatchHistory(user.getId());
+        if (!list.isEmpty()){
+            rr.setMessage("获取当前用户的历史记录成功");
+            rr.setData(list);
+            rr.setState(200);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("获取当前用户的历史记录失败");
+            rr.setData(null);
+        }
+        return rr;
+    }
+    //删除指定作品的浏览记录
+    @DeleteMapping("/delete/work/history/{workId}")
+    public ResponseResult<Void> deleteUserWatchWorkHistory(@PathVariable("workId")Integer workId,HttpSession session){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        User user = (User) session.getAttribute("user");
+        UserHistory history = new UserHistory();
+        history.setUserId(user.getId());
+        history.setIllustrationId(workId);
+        boolean judge = workService.deleteUserWatchWorkHistory(history);
+        if (judge){
+            rr.setState(200);
+            rr.setMessage("删除指定作品的浏览记录成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("删除指定作品的浏览记录失败");
+        }
+        return rr;
+    }
+    //清空用户的所有浏览记录
+    @DeleteMapping("/delete/user/allHistory")
+    public ResponseResult<Void> deleteUserAllHistory(HttpSession session){
+        ResponseResult<Void> rr = new ResponseResult<>();
+        User user = (User) session.getAttribute("user");
+        boolean judge = workService.deleteUserAllHistory(user.getId());
+        if (judge){
+            rr.setState(200);
+            rr.setMessage("当前用户的所有浏览记录清空成功");
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("当前用户的所有浏览记录清空失败");
         }
         return rr;
     }

@@ -24,12 +24,12 @@ class PicSharingSpringbootApplicationTests {
         System.out.println(userService);
         System.out.println(messageService);
     }
-//    @Test
-//    void test1() throws IOException {
-//        byte[] bytes = ImageUtils.readImage("D:\\Tools\\MyDatabase\\illustrations\\1681904609134-header.jpg");
-//        String thumbnailBasePath = "D:\\Tools\\MyDatabase\\illustrations\\Thumbnails\\";
-//        String thumbnailPath = thumbnailBasePath+System.currentTimeMillis()+"-thumbnail-"+"header.jpg";
-//        byte[] bytesThumbnail = ThumbnailGenerator.generateThumbnail(bytes,"jpg");
-//        ImageUtils.saveImage(bytesThumbnail,thumbnailPath);
-//    }
+    @Test
+    void test1() throws IOException {
+        byte[] bytes = ImageUtils.readImage("D:\\Tools\\MyDatabase\\illustrations\\1683187102565-雲海.jpg");
+        String thumbnailBasePath = "D:\\Tools\\MyDatabase\\illustrations\\Thumbnails\\";
+        String thumbnailPath = thumbnailBasePath+System.currentTimeMillis()+"-thumbnail-"+"雲海.jpg";
+        byte[] bytesThumbnail = ThumbnailGenerator.generateThumbnail(bytes,"jpg");
+        ImageUtils.saveImage(bytesThumbnail,thumbnailPath);
+    }
 }

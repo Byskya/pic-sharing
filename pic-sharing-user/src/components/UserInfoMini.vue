@@ -38,7 +38,7 @@ export default {
   },
   methods:{
     load(){
-      this.axios.get('http://localhost:9090/user/info/'+this.user.id).then(response=>{
+      this.$http.get('/user/info/'+this.user.id).then(response=>{
         if (response.status===200){
           this.userInfo = response.data.data
         }

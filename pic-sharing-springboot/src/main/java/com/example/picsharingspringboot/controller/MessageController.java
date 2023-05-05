@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 //设置接收前端发送请求中携带的cookie
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.46:8081","http://192.168.31.46:8080"}, allowCredentials = "true")
 @RestController
 public class MessageController {
     @Autowired

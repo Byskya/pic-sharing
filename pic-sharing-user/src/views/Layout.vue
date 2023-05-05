@@ -56,7 +56,7 @@ export default {
       console.log(key, keyPath);
     },
     load(){
-      this.axios.get('http://localhost:9090/user/get/info').then(response=>{
+      this.$http.get('/user/get/info').then(response=>{
         if (response.status===200){
           console.log("加载成功")
           this.user = response.data.data

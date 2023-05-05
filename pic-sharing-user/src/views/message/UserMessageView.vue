@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     loadMessageNumber(){
-      this.axios.get('http://localhost:9090/message/number').then(response=>{
+      this.$http.get('/message/number').then(response=>{
         if (response.status===200){
           this.messageNumber = response.data.data
         }
@@ -66,7 +66,7 @@ export default {
       })
     },
     load(){
-      this.axios.get('http://localhost:9090/receive/allUserMessages').then(response=>{
+      this.$http.get('/receive/allUserMessages').then(response=>{
         if (response.status === 200){
           for(let i = 0; i<response.data.data.userList.length;i++){
             this.messageList.push({

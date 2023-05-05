@@ -102,12 +102,22 @@ export default {
   },
   async mounted() {
     await this.sleep(100);
+    this.userHistory()
     // 添加浏览监听器
     this.$el.addEventListener('click',this.incrementView())
     // 检查当前用户是否收藏了作品
     this.checkCollectLikes()
   },
   methods: {
+    userHistory(){
+      this.$http.post('/user/watch/history/'+this.illustration.id).then(response=>{
+        if (response.status===200){
+          console.log("添加浏览记录")
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
     toMyInfo(){
       this.$router.push({
         name:'myInfo'
@@ -131,7 +141,7 @@ export default {
     },
     // 取消收藏
     deleteFavorite(){
-      this.axios.post('http://localhost:9090/delete/collect/'+this.illustration.id).then(response=>{
+      this.$http.post('/delete/collect/'+this.illustration.id).then(response=>{
         if (response.data.state===200){
           this.$message.success("已取消收藏")
           this.isCollect = false
@@ -146,7 +156,7 @@ export default {
         this.isMine = true
       }
       else {
-        this.axios.get('http://localhost:9090/check/isCollect/'+this.illustration.id).then(response=>{
+        this.$http.get('/check/isCollect/'+this.illustration.id).then(response=>{
           if (response.data.state===200){
             this.isCollect = true
           }
@@ -160,7 +170,7 @@ export default {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
     incrementView(){
-      this.axios.post('http://localhost:9090/up/views/'+this.illustration.id).then(response=>{
+      this.$http.post('/up/views/'+this.illustration.id).then(response=>{
         if (response.data.state===200){
           this.illustration.views = response.data.data.views
         }
@@ -169,7 +179,7 @@ export default {
       })
     },
     loadTags(){
-      this.axios.get('http://localhost:9090/work/tags/'+this.workIndex.id).then(response=>{
+      this.$http.get('/work/tags/'+this.workIndex.id).then(response=>{
         if (response.data.state === 200){
           this.$message.success("获取标签成功")
           this.illustration.tags = response.data.data;
@@ -179,7 +189,7 @@ export default {
       });
     },
     load(){
-      this.axios.get('http://localhost:9090/work/'+this.workIndex.id).then(response=>{
+      this.$http.get('/work/'+this.workIndex.id).then(response=>{
         if (response.data.state===200){
           this.illustration = response.data.data
           // 请求返回作品数据后，为图片添加一个大图预览功能
@@ -195,7 +205,7 @@ export default {
     },
     like() {
       // 点赞逻辑
-      this.axios.post('http://localhost:9090/up/likes/'+this.illustration.id).then(response=>{
+      this.$http.post('/up/likes/'+this.illustration.id).then(response=>{
         if (response.data.state===200){
           this.illustration.likes = response.data.data.likes
         }
@@ -205,7 +215,7 @@ export default {
     },
     favorite() {
       // 收藏逻辑
-      this.axios.post('http://localhost:9090/collect/'+this.illustration.id).then(response=>{
+      this.$http.post('/collect/'+this.illustration.id).then(response=>{
         if (response.data.state===200){
           this.$message.success("收藏成功")
         }

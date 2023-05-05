@@ -90,7 +90,7 @@ export default {
       this.load()
     },
     load(){
-      this.axios.get('http://localhost:9090/notifications/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/notifications/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.status===200){
           this.tableData = response.data.data.list
           this.params.total = response.data.data.total

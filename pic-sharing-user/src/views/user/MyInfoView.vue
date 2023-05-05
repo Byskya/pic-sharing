@@ -2,7 +2,7 @@
 <div>
 <!--  背景-->
   <div class="bg" style="background-color: white;overflow: hidden;height: 400px">
-    <img src="@/assets/bg.png" style="overflow: hidden" width="100%" alt="bg">
+    <img src="@/assets/bg2.jpg" style="overflow: hidden;" width="100%" alt="bg">
   </div>
 
 <!--  个人信息区别-->
@@ -112,8 +112,26 @@ export default {
     })
   },
   methods:{
+    // 跳转到作品详情页
+    toWorkDetail(item){
+      const id = item.id
+      const title = item.title
+      const userId = item.userId
+      const workInfo = {
+        id,
+        title,
+        userId,
+      }
+      const itemJson = JSON.stringify(workInfo)
+      this.$router.push({
+        name:'workDetail',
+        query:{
+          itemJson
+        }
+      })
+    },
     loadUserWorks(){
-      this.axios.get('http://localhost:9090/user/work/'+this.userInfo.id+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/user/work/'+this.userInfo.id+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
           this.cardList = response.data.data.list
           this.cardList = response.data.data.list
@@ -139,7 +157,7 @@ export default {
       this.$bus.$emit('showModal')
     },
     load(){
-      this.axios.get('http://localhost:9090/user/get/info').then(response=>{
+      this.$http.get('/user/get/info').then(response=>{
         if (response.status===200){
           console.log("加载成功")
           this.user = response.data.data

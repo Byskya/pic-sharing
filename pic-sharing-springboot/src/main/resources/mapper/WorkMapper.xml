@@ -25,6 +25,12 @@
     <insert id="addAuditInfo" useGeneratedKeys="true" keyProperty="id">
         insert into audit_info (user_id,illustration_id,status) values(#{userId},#{illustrationId},#{status})
     </insert>
+    <insert id="addWorkTag">
+        insert into illustration_tags (tag_name) values (#{tagName})
+    </insert>
+    <insert id="recordUserHistory">
+        insert into user_history (user_id,illustration_id) values (#{userId},#{illustrationId})
+    </insert>
     <update id="upWorkViews">
         update illustrations set views = #{views} where id = #{id}
     </update>
@@ -55,11 +61,32 @@
     <update id="takeoffWork">
         update illustrations set approved = #{approved} where id = #{id}
     </update>
+    <update id="editWorkTag">
+        update illustration_tags set tag_name = #{tagName} where id = #{id}
+    </update>
+    <update id="updateUserHistory">
+        update user_history set updated_at = NOW() where id = #{id}
+    </update>
     <delete id="deleteCollect">
         DELETE from favorites where user_id = #{userId} and illustration_id = #{illustrationId}
     </delete>
     <delete id="deleteWorkTags">
         delete from illustration_tag_map where illustration_id = #{id}
+    </delete>
+    <delete id="deleteWorkTagById">
+        delete from illustration_tags where id = #{id}
+    </delete>
+    <delete id="deleteWorkById">
+        delete from illustrations where user_id = #{userId} and id = #{id}
+    </delete>
+    <delete id="deleteUserHistoryById">
+        delete from user_history where user_id = #{userId} and illustration_id = #{illustrationId}
+    </delete>
+    <delete id="deleteUserAllHistoryByUserId">
+        delete from user_history where user_id = #{userId}
+    </delete>
+    <delete id="deleteImageTableDataById">
+        delete from images where id = #{workId}
     </delete>
     <select id="getAllTags" resultType="com.example.picsharingspringboot.entity.IllustrationTag">
         select * from illustration_tags
@@ -74,7 +101,7 @@
         select t.id,t.tag_name from illustration_tags t join illustration_tag_map m on t.id = m.tag_id where m.illustration_id = #{workId}
     </select>
     <select id="getAllIllustration" resultType="com.example.picsharingspringboot.entity.Illustration">
-        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where approved = 1
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where approved = 1 ORDER BY created_at DESC
     </select>
     <select id="getIllustrationCommentById" resultType="com.example.picsharingspringboot.entity.Comment">
         select c.*,u.username,u.avatar from comments c join t_user u on c.user_id = u.id where illustration_id = #{workId}
@@ -112,6 +139,19 @@
         select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id
     </select>
     <select id="getIllustrationByTag" resultType="com.example.picsharingspringboot.entity.Illustration">
-        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustration_tags t join illustration_tag_map m on t.id = m.tag_id join illustrations i on i.id = m.illustration_id join images im on i.image_id = im.id where t.id = #{id}
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustration_tags t join illustration_tag_map m on t.id = m.tag_id join illustrations i on i.id = m.illustration_id join images im on i.image_id = im.id where t.id = #{id} and i.approved = 1
+    </select>
+    <select id="getEditWorkInfoById" resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.url as imageUrl,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where i.id = #{workId}
+    </select>
+    <select id="findUserHistory"   resultType="com.example.picsharingspringboot.entity.UserHistory">
+        select * from user_history where user_id = #{userId} and illustration_id = #{illustrationId}
+    </select>
+    <select id="getUserWatchHistory" resultType="com.example.picsharingspringboot.entity.UserHistory">
+        select * from user_history where user_id = #{userId}
+    </select>
+    <select id="getIllustrationThumbnailById"
+            resultType="com.example.picsharingspringboot.entity.Illustration">
+        select i.*,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where i.id = #{id}
     </select>
 </mapper>

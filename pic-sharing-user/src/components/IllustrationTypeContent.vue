@@ -8,7 +8,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-empty v-if="total===0" description="加载中" v-loading="loadingWork">
+      <el-empty v-if="total===0" description="空空如也" v-loading="loadingWork">
       </el-empty>
       <div v-else>
         <el-row  :gutter="20">
@@ -77,12 +77,33 @@ export default {
     }
   },
   methods:{
+    toWorkDetail(item){
+      const id = item.id
+      const title = item.title
+      const userId = item.userId
+      const workInfo = {
+        id,
+        title,
+        userId,
+      }
+      const itemJson = JSON.stringify(workInfo)
+      this.$router.push({
+        name:'workDetail',
+        query:{
+          itemJson
+        }
+      })
+    },
     load(){
-      this.axios.get('http://localhost:9090/illustration/bytag/'+this.tagId+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
-        if (response.status===200){
+      this.$http.get('/illustration/bytag/'+this.tagId+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+        if (response.data.state===200){
           console.log(response.data.data)
           this.cardList = response.data.data.list
           this.total = response.data.data.total
+          this.loadingWork = false
+        }
+        else {
+          this.total = 0
           this.loadingWork = false
         }
       }).catch(error=>{

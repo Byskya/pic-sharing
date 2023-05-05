@@ -22,6 +22,7 @@
             </template>
             <el-menu-item index="/reviewWork">审核</el-menu-item>
             <el-menu-item index="/removeWork">下架</el-menu-item>
+            <el-menu-item index="/addWorkTag">作品标签管理</el-menu-item>
           </el-submenu>
           <el-submenu index="/message">
             <template slot="title">

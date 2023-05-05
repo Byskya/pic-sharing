@@ -83,7 +83,7 @@ export default {
       this.load()
     },
     load(){
-      this.axios.get('http://localhost:9090/user/followList/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/user/followList/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.status===200){
           this.tableData = response.data.data.list
           this.params.total = response.data.data.total
@@ -111,7 +111,7 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
-      this.axios.post('http://localhost:9090/delete/follow/'+row.id).then(response=>{
+      this.$http.post('/delete/follow/'+row.id).then(response=>{
         if (response.data.state===200){
           this.$message.success("已取消关注")
         }

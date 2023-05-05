@@ -54,7 +54,7 @@ export default {
   methods:{
     load(){
       const keyword = JSON.parse(this.$route.query.itemJson.toString())
-      this.axios.get('http://localhost:9090/search/work/'+keyword+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
+      this.$http.get('/search/work/'+keyword+'/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.status === 200){
           this.cardList = response.data.data.list
           this.cardList = response.data.data.list
