@@ -35,11 +35,11 @@
         <el-row  :gutter="20">
           <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
             <el-card class="card" :body-style="{ padding: '0px' }">
-              <img :src="'data:image/png;base64,' + item.imageResource" class="image">
+              <img :src="'data:image/png;base64,' + item.imageResource" class="image" @click="toWorkDetail(item)">
               <div class="content">
                 <div class="title">{{ item.title}}</div>
-                <div class="bottom clearfix">
-                  <time class="time">{{new Date(item.createdAt).toLocaleString()}}</time>
+                <div class="bottom">
+                  <time class="time">{{new Date(item.createdAt).toLocaleDateString()}}</time>
                   <el-button type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
                 </div>
               </div>

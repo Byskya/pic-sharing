@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 //设置接收前端发送请求中携带的cookie
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.46:8081","http://192.168.31.46:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.47:8081","http://192.168.31.47:8080"}, allowCredentials = "true")
 @RestController
 public class UserController {
     @Autowired
@@ -293,6 +293,30 @@ public class UserController {
             rr.setData(null);
             rr.setState(500);
             rr.setMessage("作者信息加载失败");
+        }
+        return rr;
+    }
+    /**
+     * 获取用户的全部粉丝
+     */
+    @GetMapping("/user/fansList/{pageNum}/{pageSize}")
+    public ResponseResult<PageInfo<User>> getUserFansList(@PathVariable("pageNum")Integer pageNum,@PathVariable("pageSize")Integer pageSize,HttpSession session){
+        PageHelper.startPage(pageNum,pageSize);
+        ResponseResult<PageInfo<User>> rr= new ResponseResult<>();
+        User user = (User)session.getAttribute("user");
+        Follow follow = new Follow();
+        follow.setFollowingId(user.getId());
+        List<User> list = userService.getUserFansList(follow);
+        if (!list.isEmpty()){
+            PageInfo<User> pageInfo = new PageInfo<>(list);
+            rr.setState(200);
+            rr.setMessage("获取用户粉丝列表成功");
+            rr.setData(pageInfo);
+        }
+        else {
+            rr.setData(null);
+            rr.setMessage("获取用户粉丝列表失败");
+            rr.setState(500);
         }
         return rr;
     }

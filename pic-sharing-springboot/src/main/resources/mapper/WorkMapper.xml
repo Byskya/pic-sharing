@@ -31,6 +31,9 @@
     <insert id="recordUserHistory">
         insert into user_history (user_id,illustration_id) values (#{userId},#{illustrationId})
     </insert>
+    <insert id="likeWork">
+        insert into user_likes (user_id,illustration_id) values(#{userId},#{illustrationId})
+    </insert>
     <update id="upWorkViews">
         update illustrations set views = #{views} where id = #{id}
     </update>
@@ -87,6 +90,9 @@
     </delete>
     <delete id="deleteImageTableDataById">
         delete from images where id = #{workId}
+    </delete>
+    <delete id="deleteLike">
+        DELETE from user_likes where user_id = #{userId} and illustration_id = #{illustrationId}
     </delete>
     <select id="getAllTags" resultType="com.example.picsharingspringboot.entity.IllustrationTag">
         select * from illustration_tags
@@ -153,5 +159,8 @@
     <select id="getIllustrationThumbnailById"
             resultType="com.example.picsharingspringboot.entity.Illustration">
         select i.*,im.thumbnail_path as thumbnailUrl from illustrations i join images im on i.image_id = im.id where i.id = #{id}
+    </select>
+    <select id="checkLikes" resultType="com.example.picsharingspringboot.entity.Favorite">
+        select * from user_likes where user_id = #{userId} and illustration_id = #{illustrationId}
     </select>
 </mapper>

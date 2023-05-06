@@ -23,6 +23,7 @@ import UserMessageView from "@/views/message/UserMessageView";
 import UserChatView from "@/views/message/UserChatView";
 import EditApprovedWorkView from "@/views/work/EditApprovedWorkView";
 import UserWatchHistoryView from "@/views/history/UserWatchHistoryView";
+import UserFansView from "@/views/follow/UserFansView";
 
 Vue.use(VueRouter)
 
@@ -117,6 +118,11 @@ const routes = [
         path: 'userFollow',
         name: 'userFollow',
         component: UserFollowView
+      },
+      {
+        path: 'userFans',
+        name: 'userFans',
+        component: UserFansView
       },
       {
         path: 'userHistory',

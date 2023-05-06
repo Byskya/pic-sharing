@@ -96,4 +96,10 @@ public interface WorkService {
     boolean deleteUserAllHistory(Integer userId);
 
     boolean deleteImageTableDataById(Integer workId);
+
+    boolean likeWork(Like like);
+
+    Favorite checkLikes(Like like);
+
+    boolean deleteLike(Like like);
 }

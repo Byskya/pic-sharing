@@ -48,7 +48,7 @@ export default {
     })
   },
   async mounted() {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 200))
     // 获取页面的背景dom
     const element = document.querySelector('.login-page')
     // 把图片转换成url

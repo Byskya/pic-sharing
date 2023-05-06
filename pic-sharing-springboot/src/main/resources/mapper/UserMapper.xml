@@ -39,4 +39,7 @@
     <select id="getUserFollowList" resultType="com.example.picsharingspringboot.entity.User">
         select u.* from user_follow uf join t_user u on uf.following_id = u.id where uf.follower_id = #{followerId}
     </select>
+    <select id="getFansList" resultType="com.example.picsharingspringboot.entity.User">
+        select u.* from user_follow uf join t_user u on uf.follower_id = u.id where uf.following_id = #{followingId}
+    </select>
 </mapper>

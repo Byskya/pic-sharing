@@ -274,4 +274,19 @@ public class WorkServiceImpl implements WorkService {
     public boolean deleteImageTableDataById(Integer workId) {
         return workMapper.deleteImageTableDataById(workId);
     }
+
+    @Override
+    public boolean likeWork(Like like) {
+        return workMapper.likeWork(like);
+    }
+
+    @Override
+    public Favorite checkLikes(Like like) {
+        return workMapper.checkLikes(like);
+    }
+
+    @Override
+    public boolean deleteLike(Like like) {
+        return workMapper.deleteLike(like);
+    }
 }

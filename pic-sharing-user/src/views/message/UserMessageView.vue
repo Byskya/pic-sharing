@@ -68,11 +68,13 @@ export default {
     load(){
       this.$http.get('/receive/allUserMessages').then(response=>{
         if (response.status === 200){
+          console.log(response.data.data.userList)
           for(let i = 0; i<response.data.data.userList.length;i++){
             this.messageList.push({
               id : response.data.data.userList[i].id,
               sender: response.data.data.userList[i].username,
-              time: new Date(response.data.data.userList[i].createdAt).toLocaleString(),
+              // time: new Date(response.data.data.userList[i].createdAt).toLocaleString(),
+              time: '',
               content: '',
               avatar: 'data:image/*;base64,'+response.data.data.userList[i].avatar,
               isRead: false,
@@ -83,6 +85,7 @@ export default {
           for(let j = 0;j<this.messageList.length;j++){
             if (this.messageList[j].id===response.data.data.messageList[i].senderId || this.messageList[j].id===response.data.data.messageList[i].receiverId){
               this.messageList[j].content = response.data.data.messageList[i].message
+              this.messageList[j].time = new Date(response.data.data.messageList[i].createdAt).toLocaleString()
               if (this.messageList[j].id===response.data.data.messageList[i].senderId && response.data.data.messageList[i].read === false){
                 this.messageList[j].notReadMessageNumber++
               }

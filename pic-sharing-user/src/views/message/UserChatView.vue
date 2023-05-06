@@ -54,7 +54,7 @@ export default {
     },
     openWebsocket(){
       // 创建WebSocket连接
-      this.socket = new WebSocket('ws://192.168.31.46:9090/UserChat/'+this.currentUser.id);
+      this.socket = new WebSocket('ws://192.168.31.47:9090/UserChat/'+this.currentUser.id);
       this.socket.onopen = () => {
         console.log('WebSocket连接已打开');
       };
@@ -137,10 +137,10 @@ export default {
   margin-bottom: 15px;
 }
 .right{
-  float: right;
+  justify-content: flex-end;
 }
 .left{
-  float: left;
+  justify-content: flex-start;
 }
 .right .message-bubble {
   background-color: #5eb95e;
@@ -148,6 +148,7 @@ export default {
   border-radius: 10px 10px 0 10px;
   padding: 10px 15px;
   max-width: 70%;
+  margin-right: 8px;
   word-wrap: break-word;
 }
 

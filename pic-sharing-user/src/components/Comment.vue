@@ -3,7 +3,7 @@
     <div slot="header">
       <img :src="'data:image/*;base64,'+comment.avatar" class="comment-avatar">
       <span class="comment-username">{{ comment.username }}</span>
-      <span class="comment-time">{{ new Date(comment.createdAt) }}</span>
+      <span class="comment-time">{{ new Date(comment.createdAt).toLocaleString() }}</span>
     </div>
     <div>{{ comment.content }}</div>
   </el-card>

@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.46:8081","http://192.168.31.46:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.47:8081","http://192.168.31.47:8080"}, allowCredentials = "true")
 @RestController
 public class WorkController {
     @Autowired
@@ -481,6 +481,27 @@ public class WorkController {
         }
         return rr;
     }
+//    判断作品是否点赞
+    @GetMapping("/check/isLike/{workId}")
+    public ResponseResult<Like> checkLikes(@PathVariable("workId") Integer workId,HttpSession session){
+        ResponseResult<Like> rr = new ResponseResult<>();
+        Like like = new Like();
+        like.setIllustrationId(workId);
+        User user = (User)session.getAttribute("user");
+        like.setUserId(user.getId());
+        Favorite realHas = workService.checkLikes(like);
+        if (realHas!=null){
+            rr.setMessage("作品点赞");
+            rr.setState(200);
+            rr.setData(like);
+        }
+        else {
+            rr.setState(500);
+            rr.setMessage("作品未点赞");
+            rr.setData(null);
+        }
+        return rr;
+    }
     //收藏作品
     @PostMapping("/collect/{workId}")
     public ResponseResult<Favorite> collectWork(@PathVariable("workId") Integer workId,HttpSession session){
@@ -524,6 +545,34 @@ public class WorkController {
         }
         return rr;
     }
+    //取消点赞
+    @PostMapping("/delete/like/{workId}")
+    @Transactional
+    public ResponseResult<Like> deleteLike(@PathVariable("workId") Integer workId,HttpSession session){
+        ResponseResult<Like> rr = new ResponseResult<>();
+        Like like = new Like();
+        like.setIllustrationId(workId);
+        User user = (User)session.getAttribute("user");
+        like.setUserId(user.getId());
+        boolean judge = workService.deleteLike(like);
+        if (judge){
+            Illustration illustration = new Illustration();
+            illustration.setId(workId);
+            illustration = workService.getIllustrationById(illustration);
+            illustration.setLikes(illustration.getLikes()-1);
+            boolean judge2 = workService.upWorkLikes(illustration);
+            if (judge2){
+                rr.setMessage("取消点赞成功");
+                rr.setState(200);
+                rr.setData(like);
+                return rr;
+            }
+        }
+        rr.setData(null);
+        rr.setState(500);
+        rr.setMessage("取消点赞失败");
+        return rr;
+    }
 //    浏览数计算
     @PostMapping("/up/views/{workId}")
     public ResponseResult<Illustration> upWorkViews(@PathVariable("workId") Integer workId){
@@ -547,24 +596,30 @@ public class WorkController {
     }
     //    点赞数
     @PostMapping("/up/likes/{workId}")
-    public ResponseResult<Illustration> upWorkLikes(@PathVariable("workId") Integer workId){
-        System.out.println("test");
-        ResponseResult<Illustration> rr = new ResponseResult<>();
-        Illustration illustration = new Illustration();
-        illustration.setId(workId);
-        illustration = workService.getIllustrationById(illustration);
-        illustration.setLikes(illustration.getLikes()+1);
-        boolean judge = workService.upWorkLikes(illustration);
-        if (judge){
-            rr.setData(illustration);
-            rr.setMessage("点赞数添加成功");
-            rr.setState(200);
+    @Transactional
+    public ResponseResult<Like> upWorkLikes(@PathVariable("workId") Integer workId,HttpSession session){
+        ResponseResult<Like> rr = new ResponseResult<>();
+        Like like = new Like();
+        like.setIllustrationId(workId);
+        User user = (User)session.getAttribute("user");
+        like.setUserId(user.getId());
+        boolean judge2 = workService.likeWork(like);
+        if (judge2){
+            Illustration illustration = new Illustration();
+            illustration.setId(workId);
+            illustration = workService.getIllustrationById(illustration);
+            illustration.setLikes(illustration.getLikes()+1);
+            boolean judge = workService.upWorkLikes(illustration);
+            if (judge){
+                rr.setData(like);
+                rr.setMessage("点赞数添加成功");
+                rr.setState(200);
+                return rr;
+            }
         }
-        else {
-            rr.setState(500);
-            rr.setData(null);
-            rr.setMessage("点赞数添加失败");
-        }
+        rr.setState(500);
+        rr.setData(null);
+        rr.setMessage("点赞数添加失败");
         return rr;
     }
 //    根据作品id获取作品的信息（图片原图）

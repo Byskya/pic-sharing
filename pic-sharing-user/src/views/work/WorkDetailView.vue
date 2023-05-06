@@ -22,7 +22,7 @@
           <span v-else @click="toAuthorInfo">
             <UserInfoMini :user="authorInfo"></UserInfoMini>
           </span>
-          <span>{{ new Date(illustration.createdAt) }}</span>
+          <span>{{ new Date(illustration.createdAt).toLocaleString() }}</span>
         </div>
 <!--        一些收藏数，浏览数，点赞数的数据显示-->
         <div>
@@ -47,7 +47,8 @@
         </el-collapse>
         <!-- 操作按钮 -->
         <div class="actions">
-          <el-button @click="like">点赞{{illustration.likes}}</el-button>
+          <el-button v-if="isLike" @click="deleteLike">已点赞{{illustration.likes}}</el-button>
+          <el-button v-else @click="like">点赞{{illustration.likes}}</el-button>
           <div v-if="isMine">
             <el-button>mine</el-button>
           </div>
@@ -79,6 +80,7 @@ export default {
       srcList:[],
       views: 0,
       isCollect:false,
+      isLike:false,
       isMine:false
     }
   },
@@ -107,6 +109,7 @@ export default {
     this.$el.addEventListener('click',this.incrementView())
     // 检查当前用户是否收藏了作品
     this.checkCollectLikes()
+    this.checkCollectLikes2()
   },
   methods: {
     userHistory(){
@@ -150,6 +153,18 @@ export default {
         console.log(error)
       })
     },
+    // 取消点赞
+    deleteLike(){
+      this.$http.post('/delete/like/'+this.illustration.id).then(response=>{
+        if (response.data.state===200){
+          this.$message.success("已取消点赞")
+          this.isCollect = false
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
+    },
+
     // 检测是否收藏和点赞
     checkCollectLikes(){
       if (this.illustration.userId === this.userInfo.id){
@@ -164,6 +179,15 @@ export default {
           console.log(error)
         })
       }
+    },
+    checkCollectLikes2(){
+      this.$http.get('/check/isLike/'+this.illustration.id).then(response=>{
+        if (response.data.state===200){
+          this.isLike = true
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
     },
     //睡眠方法，解决异步处理顺序的问题
     sleep(ms) {
@@ -208,6 +232,7 @@ export default {
       this.$http.post('/up/likes/'+this.illustration.id).then(response=>{
         if (response.data.state===200){
           this.illustration.likes = response.data.data.likes
+          this.$message.success("点赞成功")
         }
       }).catch(error=>{
         console.log(error)

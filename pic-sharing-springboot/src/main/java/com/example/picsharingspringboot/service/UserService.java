@@ -31,4 +31,6 @@ public interface UserService {
     boolean deleteFollow(Follow follow);
 
     List<User> getUserFollowList(Follow follow);
+
+    List<User> getUserFansList(Follow follow);
 }

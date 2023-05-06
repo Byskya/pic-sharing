@@ -29,4 +29,6 @@ public interface UserMapper {
     boolean deleteFollow(Follow follow);
 
     List<User> getUserFollowList(Follow follow);
+
+    List<User> getFansList(Follow follow);
 }

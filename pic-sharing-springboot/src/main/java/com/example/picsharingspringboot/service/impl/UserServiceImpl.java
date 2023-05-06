@@ -126,4 +126,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getUserFollowList(Follow follow) {
         return userMapper.getUserFollowList(follow);
     }
+
+    @Override
+    public List<User> getUserFansList(Follow follow) {
+        return userMapper.getFansList(follow);
+    }
 }

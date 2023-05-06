@@ -28,6 +28,7 @@
                     <el-image
                         style="width: 100px; height: 100px"
                         :src="'data:image/*;base64,'+props.row.imageResource"
+                        :preview-src-list="preview(props.row.imageResource)"
                     >
                     </el-image>
                   </div>
@@ -107,6 +108,11 @@ export default {
     this.load()
   },
   methods: {
+    preview(imageResource){
+      const base64Str = 'data:image/*;base64,'+imageResource
+      const blob = this.$base64ToBlob(base64Str)
+      return [URL.createObjectURL(blob)]
+    },
     // 分页导航栏
     handleCurrentChange(pageNum){
       this.params.pageNum = pageNum

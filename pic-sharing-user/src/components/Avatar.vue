@@ -16,6 +16,9 @@
         <el-dropdown-item>
           <a @click="toUserFollow">关注列表</a>
         </el-dropdown-item>
+        <el-dropdown-item>
+          <a @click="toUserFans">粉丝列表</a>
+        </el-dropdown-item>
         <el-dropdown-item><a @click="toCollection">收藏</a></el-dropdown-item>
         <el-dropdown-item><a @click="toUserHistory">浏览记录</a></el-dropdown-item>
         <el-dropdown-item>
@@ -48,7 +51,6 @@ export default {
     if (localStorage.getItem("isLoggedIn")){
       this.load()
       this.loadMessageNumber()
-      this.isLogin = true
     }
   },
   computed:{
@@ -64,6 +66,11 @@ export default {
     }
   },
   methods:{
+    toUserFans(){
+      this.$router.push({
+        name:'userFans'
+      })
+    },
     toUserHistory(){
       this.$router.push({
         name:'userHistory'
@@ -117,6 +124,7 @@ export default {
           console.log("加载成功")
           this.user = response.data.data
           this.$store.dispatch('login',response.data.data)
+          this.isLogin = true
         }
         else {
           this.$message.success(response.data.data.message)

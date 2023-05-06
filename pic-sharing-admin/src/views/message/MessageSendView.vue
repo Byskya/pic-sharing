@@ -1,6 +1,9 @@
 <template>
   <div>
+    <el-input type="text" :row="2" v-model="title" placeholder="请输入通知标题"></el-input>
+    <div style="height: 20px"></div>
     <el-input type="textarea" :rows="2" v-model="message" placeholder="请输入消息"></el-input>
+    <div style="height: 10px"></div>
     <el-button type="primary" @click="sendMessage">发送消息</el-button>
   </div>
 </template>
@@ -10,6 +13,7 @@ export default {
   name: "MessageView",
   data(){
     return{
+      title:'',
       message: '',
       socket: null, // WebSocket实例
     }

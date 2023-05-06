@@ -18,9 +18,12 @@
       </el-table-column>
       <el-table-column
           fixed
-          prop="createdAt"
           label="注册日期"
           width="150">
+        <template slot-scope="scope">
+          <i class="el-icon-time"></i>
+          <span style="margin-left: 10px">{{ new Date(scope.row.updatedAt).toLocaleDateString() }}</span>
+        </template>
       </el-table-column>
       <el-table-column
           prop="username"
