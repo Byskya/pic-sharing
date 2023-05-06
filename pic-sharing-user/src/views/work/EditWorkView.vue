@@ -122,7 +122,11 @@ export default {
           this.ruleForm.desc = response2.data.data.description
           const base64Str = 'data:image/*;base64,'+response2.data.data.imageResource
           const blob = this.$base64ToBlob(base64Str)
-          this.list.push({name:'xxx',url:URL.createObjectURL(blob)})
+          // 获取文件名
+          const arr = response2.data.data.imageUrl.split('\\')
+          const fileName = arr[arr.length - 1]
+          this.list.push({name:fileName,url:URL.createObjectURL(blob)})
+          this.ruleForm.illustration = new File([blob], fileName, {type: blob.type, lastModified: Date.now()})
         }
       })).catch(error=>{
         console.log(error)

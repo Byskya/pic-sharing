@@ -3,6 +3,7 @@
     <el-dropdown trigger="click">
       <span class="avatar">
         <img v-if="avatarData!=null" :src="'data:image/*;base64,'+avatarData" alt="User Avatar">
+        <img v-else-if="isLogin" src="@/assets/headbg.jpg" alt="User Avatar">
         <img v-else src="@/assets/headbg.jpg" alt="User Avatar" @click="toLogin">
       </span>
       <el-dropdown-menu slot="dropdown">
@@ -40,12 +41,14 @@ export default {
       isMine:'yes',
       user:{},
       messageNumber:0,
+      isLogin:false,
     }
   },
   created() {
     if (localStorage.getItem("isLoggedIn")){
       this.load()
       this.loadMessageNumber()
+      this.isLogin = true
     }
   },
   computed:{

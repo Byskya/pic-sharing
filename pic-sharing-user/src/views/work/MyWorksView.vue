@@ -147,6 +147,10 @@ export default {
           this.total = response.data.data.total
           this.loading = false
         }
+        else {
+          this.loading = false;
+          this.total = response.data.data.total
+        }
       }).catch(error=>{
         console.log(error)
       });

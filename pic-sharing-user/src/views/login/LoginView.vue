@@ -22,6 +22,7 @@ export default {
   name: 'LoginView',
   data() {
     return {
+      bgImage:'',
       loginForm: {
         username: '',
         password: ''
@@ -35,6 +36,25 @@ export default {
         ]
       }
     }
+  },
+  created() {
+    const id = 1
+    this.$http.get('/get/image/'+id).then(response=>{
+      if (response.status===200){
+        this.bgImage = response.data.data
+      }
+    }).catch(error=>{
+      console.log(error)
+    })
+  },
+  async mounted() {
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    // 获取页面的背景dom
+    const element = document.querySelector('.login-page')
+    // 把图片转换成url
+    const base64Str = 'data:image/*;base64,'+ this.bgImage
+    const blob = this.$base64ToBlob(base64Str)
+    element.style.backgroundImage = `url(${URL.createObjectURL(blob)})`
   },
   methods: {
     login() {
@@ -83,7 +103,6 @@ export default {
   min-height: 98vh;
   background-color: #f7d9e9;
   /*壁纸随机获取用户的插画图片*/
-  background-image: url(https://cdn.pixabay.com/photo/2016/12/23/03/23/anime-1920599_960_720.png);
   background-repeat: no-repeat;
   background-size: cover;
 }

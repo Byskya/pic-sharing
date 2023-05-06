@@ -35,7 +35,6 @@ public class ManagerWebSocketHandler implements org.springframework.web.socket.W
         } else {
             System.out.println("保存失败");
         }
-
     }
 
     @Override

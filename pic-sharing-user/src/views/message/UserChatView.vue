@@ -22,7 +22,7 @@
           autofocus
           class="message-input"
       >
-        <el-button slot="append" type="primary" @click="sendMessage">
+        <el-button slot="append" style="color: white" type="primary" @click="sendMessage">
           发送
         </el-button>
       </el-input>
@@ -31,7 +31,6 @@
 </template>
 
 <script>
-
 export default {
   name: "UserChatView",
   data() {
@@ -40,23 +39,33 @@ export default {
       otherUser:{},
       messages: [
       ],
-
       newMessage: "",
     };
   },
-  created() {
-    this.openWebsocket()
+  async created() {
     this.load()
+    await this.sleep(100)
+    this.openWebsocket()
   },
   methods: {
+    //睡眠方法，解决异步处理顺序的问题
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
     openWebsocket(){
       // 创建WebSocket连接
-      this.socket = new WebSocket('ws://192.168.31.46:9090/UserChat');
+      this.socket = new WebSocket('ws://192.168.31.46:9090/UserChat/'+this.currentUser.id);
       this.socket.onopen = () => {
         console.log('WebSocket连接已打开');
       };
       this.socket.onmessage = (event) => {
         console.log('收到消息:', event.data);
+        this.messages.push({
+          senderId : this.otherUser.id,
+          message: event.data,
+          senderName: this.otherUser.username,
+          senderAvatar: 'data:image/*;base64,'+this.otherUser.avatar,
+        });
       };
       this.socket.onclose = () => {
         console.log('WebSocket连接已关闭');
@@ -70,7 +79,7 @@ export default {
       const senderId = this.$route.query.sender
       const receiver = this.$route.query.receiver
       // 加载用户信息和聊天记录
-      this.$http.get('/user/chat/'+senderId+'/'+receiver).then(response=>{
+     this.$http.get('/user/chat/'+senderId+'/'+receiver).then(response=>{
         if (response.status===200){
           this.currentUser = response.data.data.sender
           this.otherUser = response.data.data.receiver
@@ -84,16 +93,20 @@ export default {
       if (!this.newMessage) {
         return;
       }
-
+      const message = this.newMessage
+      const userId = this.currentUser.id
+      const receiver = this.otherUser.id
       // 发送消息
-      this.socket.send(this.newMessage);
-      this.$message.success("通知发布成功")
-      // 清空消息
-      this.newMessage = '';
-
+      const messageJson = {
+        userId: userId,
+        receiver: receiver,
+        message: message
+      }
       this.$http.post('/send/message/'+this.currentUser.id+'/'+this.otherUser.id+'/'+this.newMessage).then(response=>{
         if (response.status === 200){
           console.log("发送信息成功")
+          this.socket.send(JSON.stringify(messageJson));
+          this.$message.success("消息发送成功")
           this.messages.push({
             senderId : this.currentUser.id,
             message: this.newMessage,

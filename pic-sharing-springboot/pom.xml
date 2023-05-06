@@ -32,6 +32,12 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-json -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-json</artifactId>
+            <version>5.8.16</version>
+        </dependency>
 
         <dependency>
             <groupId>com.mysql</groupId>

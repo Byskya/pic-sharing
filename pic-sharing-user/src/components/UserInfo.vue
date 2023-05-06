@@ -126,12 +126,17 @@ export default {
     if (this.user.avatar!=null){
       this.imageUrl = 'data:image/*;base64,' + this.user.avatar
     }
+    // 初始化表单头像信息
+    const base64Str = this.imageUrl
+    const blob = this.$base64ToBlob(base64Str)
+    this.ruleForm.avatar = new File([blob], 'header', {type: blob.type, lastModified: Date.now()})
+    // 初始化用户表单的生日日期信息
+    this.ruleForm.birthday = new Date(this.user.birthday)
   },
   methods:{
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
           const formData = new FormData();
           formData.append('avatar',this.ruleForm.avatar)
           formData.append('username',this.ruleForm.username)

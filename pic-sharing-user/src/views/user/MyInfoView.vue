@@ -97,8 +97,9 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
     this.load()
+    await new Promise((resolve) => setTimeout(resolve, 100))
     this.loadUserWorks()
     this.$bus.$on('showModal', () => {
       this.popup = UserInfo

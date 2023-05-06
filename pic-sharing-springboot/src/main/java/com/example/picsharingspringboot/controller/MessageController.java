@@ -97,15 +97,15 @@ public class MessageController {
         ResponseResult<Map<String,Object>> rr = new ResponseResult<>();
         Map<String,Object> chatData = new HashMap<>();
         if (sender!=null && receiver!=null){
-            boolean judge2 = messageService.setMessageIsRead(chatMessage);
-            if (judge2){
-                chatData.put("sender",sender);
-                chatData.put("receiver",receiver);
-                chatData.put("chatMessages",list);
-                rr.setState(200);
-                rr.setMessage("加载用户聊天数据成功");
-                rr.setData(chatData);
+            if (!list.isEmpty()){
+                messageService.setMessageIsRead(chatMessage);
             }
+            chatData.put("sender",sender);
+            chatData.put("receiver",receiver);
+            chatData.put("chatMessages",list);
+            rr.setState(200);
+            rr.setMessage("加载用户聊天数据成功");
+            rr.setData(chatData);
         }
         else {
             rr.setState(500);
