@@ -24,4 +24,6 @@ public interface MessageService {
     List<ChatMessage> getUserNotReadMessageNumber(User user);
 
     boolean setMessageIsRead(ChatMessage chatMessage);
+
+    List<ChatMessage> getAllMessage();
 }

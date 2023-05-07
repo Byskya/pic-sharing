@@ -40,11 +40,11 @@
       </el-empty>
       <div v-else>
         <el-row  :gutter="20">
-          <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
+          <el-col :span="4" v-for="(item, index) in cardList" :key="item.id" :offset="index % 5 === 0 ? 0 : 1">
             <el-card class="card" :body-style="{ padding: '0px' }">
               <img :src="'data:image/png;base64,' + item.imageResource" class="image" @click="toWorkDetail(item)">
               <div class="content">
-                <div class="title">{{ item.title}}</div>
+                <div class="title">{{item.title}}</div>
                 <div class="bottom">
                   <UserInfoMini :size="20" :user="{username:'',id: item.userId}"></UserInfoMini>
                   <time class="time">{{new Date(item.createdAt).toLocaleDateString()}}</time>
@@ -126,7 +126,6 @@ export default {
     load(){
       this.$http.get('/work/all/'+this.params.pageNum+'/'+this.params.pageSize).then(response=>{
         if (response.data.state===200){
-          this.cardList = response.data.data.list
           this.cardList = response.data.data.list
           this.total = response.data.data.total
           this.loadingWork = false

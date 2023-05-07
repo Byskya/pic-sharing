@@ -55,6 +55,7 @@ export default {
     const base64Str = 'data:image/*;base64,'+ this.bgImage
     const blob = this.$base64ToBlob(base64Str)
     element.style.backgroundImage = `url(${URL.createObjectURL(blob)})`
+    await new Promise((resolve) => setTimeout(resolve, 200))
   },
   methods: {
     login() {

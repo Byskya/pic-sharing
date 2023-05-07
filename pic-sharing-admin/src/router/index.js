@@ -11,6 +11,7 @@ import ReviewWorkView from "@/views/work/ReviewWorkView";
 import RemoveWorkView from "@/views/work/RemoveWorkView";
 import MessageEditView from "@/views/message/MessageEditView";
 import AddWorkTagView from "@/views/work/AddWorkTagView";
+import DataAnalyzeView from "@/views/data/DataAnalyzeView";
 
 Vue.use(VueRouter)
 
@@ -35,6 +36,11 @@ const routes = [
         path: 'home',
         name: 'home',
         component: HomeView
+      },
+      {
+        path: 'dataAnalyze',
+        name: 'dataAnalyze',
+        component: DataAnalyzeView
       },
       {
         path: 'userManage',

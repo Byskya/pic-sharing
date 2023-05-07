@@ -12,14 +12,14 @@
       </el-empty>
       <div v-else>
         <el-row  :gutter="20">
-          <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
+          <el-col :span="4" v-for="(item, index) in cardList" :key="item.id" :offset="index % 5 === 0 ? 0 : 1">
             <el-card class="card" :body-style="{ padding: '0px' }">
               <img :src="'data:image/png;base64,' + item.imageResource" class="image">
               <div class="content">
                 <div class="title">{{ item.title}}</div>
-                <div class="bottom clearfix">
-                  <time class="time">{{new Date(item.createdAt).toLocaleString()}}</time>
-                  <el-button type="text" class="button" @click="toWorkDetail(item)">查看</el-button>
+                <div class="bottom">
+                  <UserInfoMini :size="20" :user="{username:'',id: item.userId}"></UserInfoMini>
+                  <time class="time">{{new Date(item.createdAt).toLocaleDateString()}}</time>
                 </div>
               </div>
             </el-card>
@@ -41,8 +41,11 @@
 </template>
 
 <script>
+import UserInfoMini from "@/components/UserInfoMini";
+
 export default {
   name: "IllustrationTypeContent",
+  components: {UserInfoMini},
   data(){
     return{
       cardList:[],

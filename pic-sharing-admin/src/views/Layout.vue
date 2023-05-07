@@ -34,6 +34,10 @@
             </el-menu-item>
             <el-menu-item index="/messageEdit">消息编辑</el-menu-item>
           </el-submenu>
+          <el-menu-item index="/dataAnalyze">
+            <i class="el-icon-s-data"></i>
+            <span>数据分析</span>
+          </el-menu-item>
           <el-menu-item @click="loginOut">
             <i class="el-icon-switch-button"></i>
             <span>退出登录</span>

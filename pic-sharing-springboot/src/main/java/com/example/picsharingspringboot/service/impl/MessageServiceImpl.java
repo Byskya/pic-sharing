@@ -61,4 +61,9 @@ public class MessageServiceImpl implements MessageService {
     public boolean setMessageIsRead(ChatMessage chatMessage) {
         return messageMapper.setMessageIsRead(chatMessage);
     }
+
+    @Override
+    public List<ChatMessage> getAllMessage() {
+        return messageMapper.getAllMessage();
+    }
 }

@@ -36,7 +36,7 @@
         </el-empty>
         <div v-else>
           <el-row  :gutter="20">
-            <el-col :span="4" v-for="(item, index) in cardList" :key="index" :offset="index % 5 === 0 ? 0 : 1">
+            <el-col :span="4" v-for="(item, index) in cardList" :key="item.id" :offset="index % 5 === 0 ? 0 : 1">
               <el-card class="card" :body-style="{ padding: '0px' }">
                 <img :src="'data:image/png;base64,' + item.imageResource" class="image" @click="toWorkDetail(item)">
                 <div class="content">

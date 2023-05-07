@@ -26,4 +26,6 @@ public interface MessageMapper {
     List<ChatMessage> getUserNotReadMessageNumber(User user);
 
     boolean setMessageIsRead(ChatMessage chatMessage);
+
+    List<ChatMessage> getAllMessage();
 }

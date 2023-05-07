@@ -32,4 +32,7 @@
             resultType="com.example.picsharingspringboot.entity.ChatMessage">
         select * from chat_message where receiver_id = #{id} and is_read != 1
     </select>
+    <select id="getAllMessage" resultType="com.example.picsharingspringboot.entity.ChatMessage">
+            select * from chat_message
+    </select>
 </mapper>
