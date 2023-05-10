@@ -1,6 +1,7 @@
 package com.example.picsharingspringboot.controller;
 
 import com.example.picsharingspringboot.entity.*;
+import com.example.picsharingspringboot.service.UserService;
 import com.example.picsharingspringboot.service.WorkService;
 import com.example.picsharingspringboot.util.FileDeleteUtil;
 import com.example.picsharingspringboot.util.ImageUtils;
@@ -1127,6 +1128,10 @@ public class WorkController {
         ResponseResult<List<UserHistory>> rr = new ResponseResult<>();
         User user = (User) session.getAttribute("user");
         List<UserHistory> list= workService.getUserWatchHistory(user.getId());
+        for (UserHistory userHistory : list) {
+            Illustration workInfoById = workService.getWorkInfoById(userHistory.getIllustrationId());
+            userHistory.setAuthorId(workInfoById.getUserId());
+        }
         if (!list.isEmpty()){
             rr.setMessage("获取当前用户的历史记录成功");
             rr.setData(list);

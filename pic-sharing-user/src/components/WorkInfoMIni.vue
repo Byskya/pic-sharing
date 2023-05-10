@@ -7,7 +7,7 @@
         </div>
         <div style="margin-left: 20px;padding-top: 6px">
           <h3 style="margin-top: auto">{{ workInfo.title }}</h3>
-          <UserInfoMini style="margin-top: 92px" :user="{username:'',id:work.userId}" :size="30"></UserInfoMini>
+          <UserInfoMini style="margin-top: 92px" :user="{username:'',id:work.authorId}" :size="30"></UserInfoMini>
         </div>
         <div style="margin-left: auto;display: flex">
           <el-button type="info" style="align-self: center" icon="el-icon-delete" @click="deleteWorkHistory(work.illustrationId)" circle></el-button>
