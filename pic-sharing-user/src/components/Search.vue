@@ -34,7 +34,7 @@ export default {
     loadAll() {
       return [
         { "value": "自然" },
-        { "value": "AI" },
+        { "value": "风景" },
         { "value": "SAO" }
       ];
     },
