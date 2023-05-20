@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.47:8081","http://192.168.31.47:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.255.223:8081","http://192.168.255.223:8080"}, allowCredentials = "true")
 @RestController
 public class WorkController {
     @Autowired

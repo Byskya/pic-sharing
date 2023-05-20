@@ -10,7 +10,7 @@
         insert into user_follow (follower_id,following_id ) values(#{followerId},#{followingId})
     </insert>
     <update id="updateUserInfo">
-        update t_user set username=#{username},gender=#{gender},phone_number=#{phoneNumber},birthday=#{birthday},address=#{address} where id=#{id}
+        update t_user set username=#{username},gender=#{gender},phone_number=#{phoneNumber},birthday=#{birthday},address=#{address},is_admin=#{isAdmin} where id=#{id}
     </update>
     <update id="banUser">
         UPDATE t_user SET is_delete = CASE is_delete WHEN 0 THEN 1 ELSE 0 END WHERE id = #{id}

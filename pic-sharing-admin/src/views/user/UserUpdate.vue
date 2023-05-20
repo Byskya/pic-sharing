@@ -22,6 +22,10 @@
       <el-form-item label="地址">
         <el-input v-model="formInline.address" placeholder="请输入地址"></el-input>
       </el-form-item>
+      <el-form-item label="管理员">
+        <el-switch v-model="formInline.admin"></el-switch>
+      </el-form-item>
+      <div></div>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">修改</el-button>
       </el-form-item>
@@ -44,6 +48,7 @@ export default {
       phoneNumber:query.row.phoneNumber,
       birthday: query.row.birthday,
       address: query.row.address,
+      admin: query.row.admin
     }
   },
   data() {
@@ -55,7 +60,8 @@ export default {
         gender: '',
         phoneNumber:'',
         birthday:'',
-        address:''
+        address:'',
+        admin: '',
       }
     }
   },
@@ -63,6 +69,7 @@ export default {
     onSubmit() {
       console.log('submit!');
       const jsonUserData = JSON.stringify(this.formInline)
+      console.log(jsonUserData)
       this.axios.put('http://localhost:9090/user/update',jsonUserData,{
         headers:{
           'Content-Type':'application/json'

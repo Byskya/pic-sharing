@@ -11,7 +11,7 @@ import randomUID from "@/plugins/randomUID";
 
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.31.47:9090', //设置请求前缀
+  baseURL: 'http://192.168.255.223:9090', //设置请求前缀
   timeout: 10000, //设置请求超时时间,
   withCredentials: true //设置axios发送的请求携带cookie
 })

@@ -54,7 +54,7 @@ export default {
     },
     openWebsocket(){
       // 创建WebSocket连接
-      this.socket = new WebSocket('ws://192.168.31.47:9090/UserChat/'+this.currentUser.id);
+      this.socket = new WebSocket('ws://192.168.255.223:9090/UserChat/'+this.currentUser.id);
       this.socket.onopen = () => {
         console.log('WebSocket连接已打开');
       };

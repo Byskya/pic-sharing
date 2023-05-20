@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 //设置接收前端发送请求中携带的cookie
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.31.47:8081","http://192.168.31.47:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.255.223:8081","http://192.168.255.223:8080"}, allowCredentials = "true")
 @RestController
 public class UserController {
     @Autowired
@@ -142,6 +142,7 @@ public class UserController {
     @PutMapping("/user/update")
     public ResponseResult<User> userUpdate(@RequestBody User user){
         ResponseResult<User> rr = new ResponseResult<>();
+        System.out.println(user+"============================");
         userService.updateUserInfo(user);
         rr.setData(user);
         rr.setState(200);
