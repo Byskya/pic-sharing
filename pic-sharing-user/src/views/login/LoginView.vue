@@ -38,7 +38,7 @@ export default {
     }
   },
   created() {
-    const id = 1
+    const id = 4
     this.$http.get('/get/image/'+id).then(response=>{
       if (response.status===200){
         this.bgImage = response.data.data

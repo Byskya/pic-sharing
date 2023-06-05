@@ -1,14 +1,21 @@
+
 <template>
   <div>
     <el-form>
       <el-form-item label="评论内容">
+
         <el-input v-model="commentContent"></el-input>
+
       </el-form-item>
       <el-form-item>
+
         <el-button type="primary" @click="submitComment">提交评论</el-button>
+
       </el-form-item>
     </el-form>
+
     <comment v-for="(comment, index) in comments" :key="index" :comment="comment"></comment>
+
   </div>
 </template>
 

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.255.223:8081","http://192.168.255.223:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:8081","http://192.168.173.223:8081","http://192.168.173.223:8080"}, allowCredentials = "true")
 @RestController
 public class AdminController {
     @Autowired
